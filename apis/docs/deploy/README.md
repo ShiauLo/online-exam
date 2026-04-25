@@ -28,6 +28,14 @@
 - `.env.example`: 环境变量模板
 - `../sql/mysql.sql`: MySQL 首次启动时导入的初始化脚本
 
+## 2C2G 推荐参数
+
+- `NACOS_JVM_XMS=256m`
+- `NACOS_JVM_XMX=256m`
+- `NACOS_JVM_XMN=128m`
+- `EXAM_JAVA_BUILD_OPTS=-Xms128m -Xmx256m -XX:MaxMetaspaceSize=128m`
+- `EXAM_JAVA_START_OPTS=-Xms96m -Xmx256m -XX:MaxMetaspaceSize=128m`
+
 ## 设计约定
 
 - 默认只绑定到 `127.0.0.1`
