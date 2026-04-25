@@ -2,6 +2,7 @@
 param(
     [switch]$Rebuild,
     [switch]$StartTunnel,
+    [switch]$UseNacos,
     [switch]$SkipJavaBuild,
     [switch]$SkipNodeBuild,
     [switch]$SkipWeb,
@@ -41,6 +42,16 @@ $nodeServices = @(
 
 $frontendService = @{ Name = "web"; Port = 5173; Module = "web" }
 $startedProcesses = New-Object System.Collections.Generic.List[object]
+$singleHostMode = -not $UseNacos.IsPresent
+$script:startupEnvKeys = @(
+    "EXAM_NACOS_ENABLED",
+    "EXAM_ACCOUNT_ROUTE_URI",
+    "EXAM_CLASS_ROUTE_URI",
+    "EXAM_CORE_ROUTE_URI",
+    "EXAM_REALTIME_ROUTE_URI",
+    "EXAM_REALTIME_EXAM_CORE_BASE_URL"
+)
+$script:originalStartupEnv = @{}
 
 function Write-Section {
     param([string]$Title)
@@ -147,6 +158,34 @@ function Save-ProcessFile {
     $startedProcesses | ConvertTo-Json -Depth 5 | Set-Content -Path $pidFile -Encoding UTF8
 }
 
+function Push-StartupEnvironment {
+    param([hashtable]$Values)
+
+    foreach ($key in $script:startupEnvKeys) {
+        if (-not $script:originalStartupEnv.ContainsKey($key)) {
+            $script:originalStartupEnv[$key] = [Environment]::GetEnvironmentVariable($key, "Process")
+        }
+    }
+
+    foreach ($key in $script:startupEnvKeys) {
+        if ($Values.ContainsKey($key)) {
+            [Environment]::SetEnvironmentVariable($key, [string]$Values[$key], "Process")
+        } else {
+            [Environment]::SetEnvironmentVariable($key, $null, "Process")
+        }
+    }
+}
+
+function Pop-StartupEnvironment {
+    foreach ($key in $script:startupEnvKeys) {
+        if ($script:originalStartupEnv.ContainsKey($key)) {
+            [Environment]::SetEnvironmentVariable($key, $script:originalStartupEnv[$key], "Process")
+        } else {
+            [Environment]::SetEnvironmentVariable($key, $null, "Process")
+        }
+    }
+}
+
 function Register-StartedProcess {
     param(
         [string]$Name,
@@ -167,6 +206,31 @@ function Register-StartedProcess {
         startedAt = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
     }) | Out-Null
     Save-ProcessFile
+}
+
+function Get-ServiceEnvironment {
+    param([string]$ServiceName)
+
+    if (-not $singleHostMode) {
+        return @{}
+    }
+
+    $values = @{
+        EXAM_NACOS_ENABLED = "false"
+    }
+
+    if ($ServiceName -eq "exam-gateway") {
+        $values["EXAM_ACCOUNT_ROUTE_URI"] = "http://127.0.0.1:8081"
+        $values["EXAM_CLASS_ROUTE_URI"] = "http://127.0.0.1:8082"
+        $values["EXAM_CORE_ROUTE_URI"] = "http://127.0.0.1:8086"
+        $values["EXAM_REALTIME_ROUTE_URI"] = "http://127.0.0.1:8090"
+    }
+
+    if ($ServiceName -eq "exam-realtime") {
+        $values["EXAM_REALTIME_EXAM_CORE_BASE_URL"] = "http://127.0.0.1:8086"
+    }
+
+    return $values
 }
 
 function Start-SshTunnelIfNeeded {
@@ -262,12 +326,18 @@ function Start-ManagedProcess {
         Remove-Item $errLog -Force
     }
 
-    $process = Start-Process -FilePath $FilePath `
-        -ArgumentList $Arguments `
-        -WorkingDirectory $moduleDir `
-        -RedirectStandardOutput $outLog `
-        -RedirectStandardError $errLog `
-        -PassThru
+    $serviceEnv = Get-ServiceEnvironment -ServiceName $Name
+    Push-StartupEnvironment -Values $serviceEnv
+    try {
+        $process = Start-Process -FilePath $FilePath `
+            -ArgumentList $Arguments `
+            -WorkingDirectory $moduleDir `
+            -RedirectStandardOutput $outLog `
+            -RedirectStandardError $errLog `
+            -PassThru
+    } finally {
+        Pop-StartupEnvironment
+    }
 
     if (-not (Wait-PortListening -Port $Port -TimeoutSeconds $WaitSeconds)) {
         if (Test-Path $outLog) {
@@ -304,6 +374,11 @@ try {
     Write-Section "启动前检查"
     Start-SshTunnelIfNeeded
     Write-Host "启动脚本将复用已在监听端口的现有服务，仅补拉尚未启动的服务。"
+    if ($singleHostMode) {
+        Write-Host "当前模式: 单机直连模式（不依赖 Nacos，网关直接转发到 127.0.0.1）"
+    } else {
+        Write-Host "当前模式: 注册中心模式（依赖 Nacos 服务发现）"
+    }
 
     $needJavaBuild = $Rebuild.IsPresent
     if (-not $needJavaBuild) {

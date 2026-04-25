@@ -276,6 +276,12 @@ docker compose --env-file .env up -d
 
 如果你想一次性拉起前端和当前全部后端服务，可以直接使用 `docs/deploy` 里的脚本：
 
+- 默认单机直连模式启动：
+
+```powershell
+pwsh -File .\docs\deploy\start-all-local.ps1
+```
+
 - 启动全部服务：
 
 ```powershell
@@ -288,6 +294,12 @@ pwsh -File .\docs\deploy\start-all-local.ps1 -Rebuild
 pwsh -File .\docs\deploy\start-all-local.ps1 -StartTunnel -Rebuild
 ```
 
+- 如果你本地或 SSH 隧道里已经有可用的 Nacos，并且希望继续走注册中心模式：
+
+```powershell
+pwsh -File .\docs\deploy\start-all-local.ps1 -UseNacos -Rebuild
+```
+
 - 停止本次脚本拉起的全部服务：
 
 ```powershell
@@ -296,6 +308,10 @@ pwsh -File .\docs\deploy\stop-all-local.ps1
 
 脚本行为说明：
 
+- 默认使用“单机直连模式”：
+  `exam-account`、`exam-class`、`exam-core`、`exam-realtime` 都会以 `EXAM_NACOS_ENABLED=false` 启动；
+  `exam-gateway` 会自动把 `/api/account/**`、`/api/class/**`、`/api/system/**`、`/api/question/**`、`/api/paper/**`、`/api/resource/**`、`/api/exam/core/**`、`/api/score/**`、`/api/issue/core/**`、`/api/exam/realtime/**`、`/api/issue/notify/**` 直连到本机端口，不依赖 Nacos。
+- 只有传入 `-UseNacos` 时，脚本才会按注册中心模式启动。
 - 启动顺序为：全部 Java 服务 -> `exam-realtime` -> `web`
 - 传入 `-StartTunnel` 时，会先调用 `docs/deploy/start-tunnel.bat`，并等待 `3306/6379/8848` 就绪后再启动应用
 - Java 服务会统一执行一次 Maven 打包，然后以 `--spring.profiles.active=dev,local` 方式启动
