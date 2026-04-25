@@ -28,7 +28,8 @@ mkdir -p runtime-logs runtime-pids
 
 建议运行结果：
 
-- 仓库目录：`/opt/online-exam/apis`
+- Git 仓库根目录：`/opt/online-exam/apis`
+- 工程目录：`/opt/online-exam/apis/apis`
 - 日志目录：`/opt/online-exam/runtime-logs`
 - PID 目录：`/opt/online-exam/runtime-pids`
 
@@ -40,6 +41,13 @@ mkdir -p runtime-logs runtime-pids
 - npm
 - bash
 
+服务器运行时还应准备：
+
+- `/opt/online-exam/.env`
+- 该文件同时供 Docker Compose 与部署脚本读取
+- 如果未单独填写 `EXAM_DB_PASSWORD`、`EXAM_REDIS_PASSWORD`，部署脚本会回退使用 `MYSQL_ROOT_PASSWORD`、`REDIS_PASSWORD`
+- `EXAM_NACOS_PASSWORD` 需要显式填写，避免继续落到仓库里的占位值
+
 当前推荐边界：
 
 - MySQL、Redis、RabbitMQ、Nacos 这类中间件优先使用 Docker
@@ -47,6 +55,12 @@ mkdir -p runtime-logs runtime-pids
 
 原因是当前仓库已经围绕“`git pull + 定向构建 + nohup + pid/log`”做了脚本收口，
 这时把应用再套进 Docker，会把构建、重启和排障链路额外复杂化。
+
+Nacos 版本说明：
+
+- 当前 Java 服务使用的是 Spring Cloud Alibaba `2025.0.0.0`
+- 对应客户端为 Nacos `3.0.x`
+- 因此服务器侧 Nacos 不应继续停留在 `2.0.3`，建议直接统一到 `3.0.3`
 
 ## 3. 配置 GitHub SSH Key
 
@@ -112,12 +126,16 @@ git remote set-url origin git@github.com:ShiauLo/online-exam.git
 仓库内新增脚本：
 
 - `scripts/deploy/server-redeploy.sh`
+- `scripts/deploy/start-all-server.sh`
+- `scripts/deploy/stop-all-server.sh`
+- `scripts/deploy/status-all-server.sh`
 
 支持：
 
 ```bash
-bash scripts/deploy/server-redeploy.sh --repo /opt/online-exam/apis --all
-bash scripts/deploy/server-redeploy.sh --repo /opt/online-exam/apis --services exam-account,exam-gateway
+bash /opt/online-exam/apis/apis/scripts/deploy/server-redeploy.sh --repo /opt/online-exam/apis/apis --all
+bash /opt/online-exam/apis/apis/scripts/deploy/server-redeploy.sh --repo /opt/online-exam/apis/apis --services exam-account,exam-gateway
+bash /opt/online-exam/apis/apis/scripts/deploy/server-redeploy.sh --repo /opt/online-exam/apis/apis --runtime-root /opt/online-exam --env-file /opt/online-exam/.env --services exam-account,exam-gateway
 ```
 
 脚本行为：
@@ -126,9 +144,26 @@ bash scripts/deploy/server-redeploy.sh --repo /opt/online-exam/apis --services e
 - `git fetch origin`
 - `git checkout main`
 - `git pull --ff-only origin main`
+- 自动加载 `/opt/online-exam/.env`，并把其中的 `EXAM_*` / 中间件密码注入服务启动参数
 - 对目标服务执行构建与重启
+- Java 构建默认使用更保守的 Maven 内存参数，并跳过测试与 Asciidoctor 文档生成
 - 日志输出到 `/opt/online-exam/runtime-logs`
 - PID 输出到 `/opt/online-exam/runtime-pids`
+
+服务器总控脚本：
+
+```bash
+bash /opt/online-exam/apis/apis/scripts/deploy/start-all-server.sh --runtime-root /opt/online-exam --env-file /opt/online-exam/.env
+bash /opt/online-exam/apis/apis/scripts/deploy/status-all-server.sh --runtime-root /opt/online-exam
+bash /opt/online-exam/apis/apis/scripts/deploy/stop-all-server.sh --runtime-root /opt/online-exam
+```
+
+说明：
+
+- `start-all-server.sh` 对外是一条命令，对内按“基础服务 -> 业务服务 -> 边缘服务”分组启动
+- 同一分组内会并行启动，不会把全部微服务在同一秒无差别拉起
+- 启动前会先检查 `3306/6379/8848` 是否可用
+- 该脚本默认只启动已有构建产物；如果缺少 jar 或 Node 构建结果，先执行 `server-redeploy.sh`
 
 ## 6. 本地日常使用
 

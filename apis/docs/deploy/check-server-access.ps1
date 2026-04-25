@@ -2,7 +2,7 @@
 param(
     [string]$RemoteHost = "root@47.105.121.232",
     [int]$SshPort = 22,
-    [string]$RemoteRepoPath = "/opt/online-exam/apis"
+    [string]$RemoteRepoPath = "/opt/online-exam/apis/apis"
 )
 
 $ErrorActionPreference = "Stop"

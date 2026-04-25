@@ -304,6 +304,9 @@ pwsh -File .\docs\deploy\stop-all-local.ps1
 - 本地触发部署：`docs/deploy/deploy-server.ps1`
 - 服务器接入检查：`docs/deploy/check-server-access.ps1`
 - 服务器定向重启：`scripts/deploy/server-redeploy.sh`
+- 服务器一键启动：`scripts/deploy/start-all-server.sh`
+- 服务器一键停止：`scripts/deploy/stop-all-server.sh`
+- 服务器运行状态：`scripts/deploy/status-all-server.sh`
 - 本地只跑前端：`docs/deploy/start-web-local.ps1`
 
 常用命令：
@@ -314,6 +317,20 @@ pwsh -File .\docs\deploy\deploy-server.ps1 -All
 pwsh -File .\docs\deploy\check-server-access.ps1
 pwsh -File .\docs\deploy\start-web-local.ps1 -ApiBaseUrl "http://你的服务器地址:8080" -WsBaseUrl "http://你的服务器地址:8090" -IssueWsBaseUrl "http://你的服务器地址:8091"
 ```
+
+服务器侧统一启停示例：
+
+```bash
+bash /opt/online-exam/apis/apis/scripts/deploy/start-all-server.sh --runtime-root /opt/online-exam --env-file /opt/online-exam/.env
+bash /opt/online-exam/apis/apis/scripts/deploy/status-all-server.sh --runtime-root /opt/online-exam
+bash /opt/online-exam/apis/apis/scripts/deploy/stop-all-server.sh --runtime-root /opt/online-exam
+```
+
+说明：
+
+- `start-all-server.sh` 会先检查 MySQL、Redis、Nacos
+- 内部按分组并行，不是把全部微服务同时硬拉起
+- 如果某个服务缺少构建产物，先用 `server-redeploy.sh` 构建再启动
 
 详细步骤见：
 

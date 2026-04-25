@@ -76,7 +76,7 @@ services:
       - backend
 
   nacos:
-    image: nacos/nacos-server:v2.0.3
+    image: nacos/nacos-server:v3.0.3
     container_name: nacos
     restart: unless-stopped
     environment:

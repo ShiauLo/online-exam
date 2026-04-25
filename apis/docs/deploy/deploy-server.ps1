@@ -4,7 +4,7 @@ param(
     [switch]$All,
     [string]$RemoteHost = "root@47.105.121.232",
     [int]$SshPort = 22,
-    [string]$RemoteRepoPath = "/opt/online-exam/apis",
+    [string]$RemoteRepoPath = "/opt/online-exam/apis/apis",
     [string]$RemoteRuntimeRoot = "/opt/online-exam",
     [string]$RemoteScriptPath = "",
     [string]$Branch = "main"

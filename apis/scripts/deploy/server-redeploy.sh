@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_DIR="/opt/online-exam/apis"
+REPO_DIR="/opt/online-exam/apis/apis"
 RUNTIME_ROOT=""
+ENV_FILE=""
 MODE=""
 SERVICES_CSV=""
 BRANCH="main"
@@ -25,12 +26,13 @@ ALL_SERVICES=(
 usage() {
   cat <<'EOF'
 用法:
-  bash scripts/deploy/server-redeploy.sh --repo /opt/online-exam/apis --all
-  bash scripts/deploy/server-redeploy.sh --repo /opt/online-exam/apis --services exam-account,exam-gateway
+  bash scripts/deploy/server-redeploy.sh --repo /opt/online-exam/apis/apis --all
+  bash scripts/deploy/server-redeploy.sh --repo /opt/online-exam/apis/apis --services exam-account,exam-gateway
 
 参数:
   --repo <path>          服务器仓库目录
   --runtime-root <path>  运行时根目录，默认取仓库父目录
+  --env-file <path>      服务器环境变量文件，默认优先使用 <runtime-root>/.env
   --all                  重建并重启全部后端服务
   --services <csv>       重建并重启指定服务，逗号分隔
 EOF
@@ -97,6 +99,39 @@ service_entry() {
 
 service_jar() {
   echo "$1/target/$1-0.0.1-SNAPSHOT.jar"
+}
+
+load_env_file() {
+  if [[ -n "$ENV_FILE" && -f "$ENV_FILE" ]]; then
+    set -a
+    # shellcheck disable=SC1090
+    source "$ENV_FILE"
+    set +a
+  fi
+}
+
+apply_runtime_defaults() {
+  export EXAM_NACOS_ADDR="${EXAM_NACOS_ADDR:-127.0.0.1:8848}"
+  export EXAM_NACOS_USERNAME="${EXAM_NACOS_USERNAME:-nacos}"
+  export EXAM_NACOS_PASSWORD="${EXAM_NACOS_PASSWORD:-nacos}"
+
+  export EXAM_DB_HOST="${EXAM_DB_HOST:-127.0.0.1}"
+  export EXAM_DB_PORT="${EXAM_DB_PORT:-3306}"
+  export EXAM_DB_NAME="${EXAM_DB_NAME:-online_exam_db}"
+  export EXAM_DB_USERNAME="${EXAM_DB_USERNAME:-root}"
+  if [[ -z "${EXAM_DB_PASSWORD:-}" && -n "${MYSQL_ROOT_PASSWORD:-}" ]]; then
+    export EXAM_DB_PASSWORD="$MYSQL_ROOT_PASSWORD"
+  fi
+
+  export EXAM_REDIS_HOST="${EXAM_REDIS_HOST:-127.0.0.1}"
+  export EXAM_REDIS_PORT="${EXAM_REDIS_PORT:-6379}"
+  export EXAM_REDIS_DATABASE="${EXAM_REDIS_DATABASE:-0}"
+  if [[ -z "${EXAM_REDIS_PASSWORD:-}" && -n "${REDIS_PASSWORD:-}" ]]; then
+    export EXAM_REDIS_PASSWORD="$REDIS_PASSWORD"
+  fi
+
+  export EXAM_JAVA_BUILD_OPTS="${EXAM_JAVA_BUILD_OPTS:--Xms128m -Xmx384m -XX:MaxMetaspaceSize=192m}"
+  export EXAM_JAVA_START_OPTS="${EXAM_JAVA_START_OPTS:--Xms128m -Xmx384m -XX:MaxMetaspaceSize=192m}"
 }
 
 wait_port() {
@@ -172,7 +207,11 @@ build_service() {
   local service="$1"
   write_section "构建 $service"
   if [[ "$(service_type "$service")" == "java" ]]; then
-    (cd "$REPO_DIR" && ./mvnw -pl "$service" -am package -DskipTests)
+    (
+      cd "$REPO_DIR"
+      export MAVEN_OPTS="${MAVEN_OPTS:-$EXAM_JAVA_BUILD_OPTS}"
+      bash ./mvnw -pl "$service" -am package -Dmaven.test.skip=true -Dasciidoctor.skip=true
+    )
   else
     (
       cd "$REPO_DIR/$service"
@@ -209,7 +248,21 @@ start_service() {
 
     (
       cd "$service_dir"
-      nohup java -jar "$jar_path" --spring.profiles.active=dev,local >>"$out_log" 2>>"$err_log" &
+      nohup java $EXAM_JAVA_START_OPTS -jar "$jar_path" \
+        --spring.profiles.active=dev,local \
+        --EXAM_NACOS_ADDR="$EXAM_NACOS_ADDR" \
+        --EXAM_NACOS_USERNAME="$EXAM_NACOS_USERNAME" \
+        --EXAM_NACOS_PASSWORD="$EXAM_NACOS_PASSWORD" \
+        --EXAM_DB_HOST="$EXAM_DB_HOST" \
+        --EXAM_DB_PORT="$EXAM_DB_PORT" \
+        --EXAM_DB_NAME="$EXAM_DB_NAME" \
+        --EXAM_DB_USERNAME="$EXAM_DB_USERNAME" \
+        --EXAM_DB_PASSWORD="$EXAM_DB_PASSWORD" \
+        --EXAM_REDIS_HOST="$EXAM_REDIS_HOST" \
+        --EXAM_REDIS_PORT="$EXAM_REDIS_PORT" \
+        --EXAM_REDIS_DATABASE="$EXAM_REDIS_DATABASE" \
+        --EXAM_REDIS_PASSWORD="$EXAM_REDIS_PASSWORD" \
+        >>"$out_log" 2>>"$err_log" &
       echo $! >"$pid_file"
     )
   else
@@ -221,6 +274,9 @@ start_service() {
 
     (
       cd "$service_dir"
+      export EXAM_NACOS_ADDR EXAM_NACOS_USERNAME EXAM_NACOS_PASSWORD
+      export EXAM_DB_HOST EXAM_DB_PORT EXAM_DB_NAME EXAM_DB_USERNAME EXAM_DB_PASSWORD
+      export EXAM_REDIS_HOST EXAM_REDIS_PORT EXAM_REDIS_DATABASE EXAM_REDIS_PASSWORD
       nohup node "$entry_file" >>"$out_log" 2>>"$err_log" &
       echo $! >"$pid_file"
     )
@@ -246,6 +302,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --runtime-root)
       RUNTIME_ROOT="$2"
+      shift 2
+      ;;
+    --env-file)
+      ENV_FILE="$2"
       shift 2
       ;;
     --services)
@@ -284,6 +344,10 @@ if [[ -z "$RUNTIME_ROOT" ]]; then
   RUNTIME_ROOT="$(cd "$REPO_DIR/.." && pwd)"
 fi
 
+if [[ -z "$ENV_FILE" && -f "$RUNTIME_ROOT/.env" ]]; then
+  ENV_FILE="$RUNTIME_ROOT/.env"
+fi
+
 LOG_DIR="$RUNTIME_ROOT/runtime-logs"
 PID_DIR="$RUNTIME_ROOT/runtime-pids"
 
@@ -292,6 +356,9 @@ require_command bash
 require_command java
 require_command node
 require_command npm
+
+load_env_file
+apply_runtime_defaults
 
 ORIGIN_URL="$(git -C "$REPO_DIR" remote get-url origin)"
 if [[ "$ORIGIN_URL" == https://* ]]; then
