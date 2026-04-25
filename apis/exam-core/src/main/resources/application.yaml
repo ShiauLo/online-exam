@@ -7,8 +7,14 @@ spring:
   application:
     name: exam-core
   cloud:
+    discovery:
+      enabled: ${EXAM_NACOS_ENABLED:true}
+    service-registry:
+      auto-registration:
+        enabled: ${EXAM_NACOS_ENABLED:true}
     nacos:
       discovery:
+        enabled: ${EXAM_NACOS_ENABLED:true}
         username: ${EXAM_NACOS_USERNAME:nacos}
         password: ${EXAM_NACOS_PASSWORD:nacos}
   datasource:

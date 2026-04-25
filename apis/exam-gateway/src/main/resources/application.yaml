@@ -9,8 +9,14 @@ spring:
   application:
     name: exam-gateway
   cloud:
+    discovery:
+      enabled: ${EXAM_NACOS_ENABLED:true}
+    service-registry:
+      auto-registration:
+        enabled: ${EXAM_NACOS_ENABLED:true}
     nacos:
       discovery:
+        enabled: ${EXAM_NACOS_ENABLED:true}
         username: ${EXAM_NACOS_USERNAME}
         password: ${EXAM_NACOS_PASSWORD}
     gateway:
@@ -40,39 +46,39 @@ spring:
                 allowCredentials: true
           routes:
             - id: item
-              uri: lb://exam-account
+              uri: ${EXAM_ACCOUNT_ROUTE_URI:lb://exam-account}
               predicates:
                 - Path=/api/account/**
             - id: class
-              uri: lb://exam-class
+              uri: ${EXAM_CLASS_ROUTE_URI:lb://exam-class}
               predicates:
                 - Path=/api/class/**
             - id: system
-              uri: lb://exam-account
+              uri: ${EXAM_ACCOUNT_ROUTE_URI:lb://exam-account}
               predicates:
                 - Path=/api/system/**
             - id: question
-              uri: lb://exam-class
+              uri: ${EXAM_CLASS_ROUTE_URI:lb://exam-class}
               predicates:
                 - Path=/api/question/**
             - id: paper
-              uri: lb://exam-class
+              uri: ${EXAM_CLASS_ROUTE_URI:lb://exam-class}
               predicates:
                 - Path=/api/paper/**
             - id: core
-              uri: lb://exam-core
+              uri: ${EXAM_CORE_ROUTE_URI:lb://exam-core}
               predicates:
                 - Path=/api/exam/core/**
             - id: score
-              uri: lb://exam-core
+              uri: ${EXAM_CORE_ROUTE_URI:lb://exam-core}
               predicates:
                 - Path=/api/score/**
             - id: resource
-              uri: lb://exam-class
+              uri: ${EXAM_CLASS_ROUTE_URI:lb://exam-class}
               predicates:
                 - Path=/api/resource/**
             - id: issue-core
-              uri: lb://exam-core
+              uri: ${EXAM_CORE_ROUTE_URI:lb://exam-core}
               predicates:
                 - Path=/api/issue/core/**
             - id: realtime
