@@ -74,11 +74,13 @@ describe('loadAppConfig', () => {
     );
 
     const config = loadAppConfig(root, {
-      EXAM_DB_HOST: 'env-host'
+      EXAM_DB_HOST: 'env-host',
+      EXAM_NACOS_ENABLED: 'false'
     });
 
     expect(config.mysql.host).toBe('env-host');
     expect(config.mysql.database).toBe('local_db');
     expect(config.downstream.examCoreBaseUrl).toBe('http://127.0.0.1:9000');
+    expect(config.nacos.enabled).toBe(false);
   });
 });

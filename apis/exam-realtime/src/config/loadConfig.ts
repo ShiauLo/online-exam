@@ -85,6 +85,7 @@ function applyEnvOverrides(base: LooseObject, env: NodeJS.ProcessEnv) {
     ['redis.port', 'EXAM_REDIS_PORT'],
     ['redis.database', 'EXAM_REDIS_DATABASE'],
     ['redis.password', 'EXAM_REDIS_PASSWORD'],
+    ['nacos.enabled', 'EXAM_NACOS_ENABLED'],
     ['nacos.serverAddr', 'EXAM_NACOS_ADDR'],
     ['nacos.username', 'EXAM_NACOS_USERNAME'],
     ['nacos.password', 'EXAM_NACOS_PASSWORD'],

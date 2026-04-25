@@ -76,11 +76,11 @@ spring:
               predicates:
                 - Path=/api/issue/core/**
             - id: realtime
-              uri: lb://exam-realtime
+              uri: ${EXAM_REALTIME_ROUTE_URI:lb://exam-realtime}
               predicates:
                 - Path=/api/exam/realtime/**
             - id: issue-notify
-              uri: lb://exam-realtime
+              uri: ${EXAM_REALTIME_ROUTE_URI:lb://exam-realtime}
               predicates:
                 - Path=/api/issue/notify/**
   datasource:
