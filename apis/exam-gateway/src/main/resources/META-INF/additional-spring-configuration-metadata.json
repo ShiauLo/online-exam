@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "exam.auth.ignore-paths",
+      "type": "java.util.List<java.lang.String>",
+      "description": "Gateway auth ignore path patterns."
+    }
+  ]
+}

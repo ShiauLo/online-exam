@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.esbuild-probe/
+coverage/
+.devserver.err
+.devserver.pid
+esbuild-test.exe

@@ -1,0 +1,28 @@
+server:
+  port: 8083
+
+spring:
+  profiles:
+    active: dev, local
+  application:
+    name: exam-question
+  cloud:
+    nacos:
+      discovery:
+        username: ${EXAM_NACOS_USERNAME}
+        password: ${EXAM_NACOS_PASSWORD}
+  datasource:
+    username: ${EXAM_DB_USERNAME}
+    password: ${EXAM_DB_PASSWORD}
+
+exam:
+  resource:
+    local-storage-root: ${EXAM_RESOURCE_STORAGE_ROOT:./tmp_resource}
+  jwt:
+    secret: "mySuperSecretKeyThatIsAtLeast32BytesLongForHS512"
+    access-token-expiration: 1800000
+    refresh-token-expiration: 604800000
+  api-test:
+    enabled: true
+    generate-on-startup: true
+    controller-base-package: com.maghert.examquestion.controller

@@ -1,0 +1,73 @@
+{
+  "properties": [
+    {
+      "name": "aliyun.sms.region",
+      "type": "java.lang.String",
+      "description": "Description for aliyun.sms.region."
+    },
+    {
+      "name": "aliyun.sms.endpoint",
+      "type": "java.lang.String",
+      "description": "Description for aliyun.sms.endpoint."
+    },
+    {
+      "name": "aliyun.sms.signName",
+      "type": "java.lang.String",
+      "description": "Description for aliyun.sms.signName."
+    },
+    {
+      "name": "aliyun.sms.templateCode",
+      "type": "java.lang.String",
+      "description": "Description for aliyun.sms.templateCode."
+    },
+    {
+      "name": "aliyun.access-key.id",
+      "type": "java.lang.String",
+      "description": "Description for aliyun.access-key.id."
+    },
+    {
+      "name": "aliyun.access-key.secret",
+      "type": "java.lang.String",
+      "description": "Description for aliyun.access-key.secret."
+    },
+    {
+      "name": "aliyun.sms.templateParam.min",
+      "type": "java.lang.String",
+      "description": "Description for aliyun.sms.templateParam.min."
+    },
+    {
+      "name": "aliyun.sms.templateParam.code",
+      "type": "java.lang.String",
+      "description": "Description for aliyun.sms.templateParam.code."
+    },
+    {
+      "name": "exam-account.jwt.secret",
+      "type": "java.lang.String",
+      "description": "Description for exam-account.jwt.secret."
+    },
+    {
+      "name": "exam-account.jwt.access-token-expiration",
+      "type": "java.lang.Long",
+      "description": "Description for exam-account.jwt.access-token-expiration."
+    },
+    {
+      "name": "exam-account.jwt.refresh-token-expiration",
+      "type": "java.lang.Long",
+      "description": "Description for exam-account.jwt.refresh-token-expiration."
+    },
+    {
+      "name": "exam.jwt.access-token-expiration",
+      "type": "java.lang.Long",
+      "description": "Description for exam.jwt.access-token-expiration."
+    },
+    {
+      "name": "exam.jwt.refresh-token-expiration",
+      "type": "java.lang.Long",
+      "description": "Description for exam.jwt.refresh-token-expiration."
+    },
+    {
+      "name": "exam.jwt.secret",
+      "type": "java.lang.String",
+      "description": "Description for exam.jwt.secret."
+    }
+  ] }

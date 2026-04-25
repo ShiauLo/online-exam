@@ -1,0 +1,19 @@
+mysql:
+  host: ${EXAM_DB_HOST}
+  port: ${EXAM_DB_PORT}
+  database: ${EXAM_DB_NAME}
+  user: ${EXAM_DB_USERNAME}
+  password: ${EXAM_DB_PASSWORD}
+
+nacos:
+  enabled: ${EXAM_NACOS_ENABLED}
+  serverAddr: ${EXAM_NACOS_ADDR}
+  username: ${EXAM_NACOS_USERNAME}
+  password: ${EXAM_NACOS_PASSWORD}
+  namespace: ${EXAM_NACOS_NAMESPACE}
+  group: ${EXAM_NACOS_GROUP}
+  serviceIp: ${EXAM_ISSUE_NOTIFY_IP}
+  servicePort: ${EXAM_ISSUE_NOTIFY_PORT}
+
+jwt:
+  secret: ${EXAM_JWT_SECRET}

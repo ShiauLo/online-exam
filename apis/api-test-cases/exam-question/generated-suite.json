@@ -1,0 +1,1218 @@
+{
+  "serviceName" : "exam-question",
+  "generatedAt" : "2026-04-24T13:57:31.644474400+08:00",
+  "endpoints" : [ {
+    "endpointKey" : "PUT /api/question/audit",
+    "handler" : "QuestionController#audit",
+    "httpMethod" : "PUT",
+    "path" : "/api/question/audit",
+    "requestBodyClass" : "com.maghert.examquestion.dto.QuestionAuditRequest",
+    "validationBound" : true,
+    "fields" : [ {
+      "name" : "questionId",
+      "type" : "java.lang.Long",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_NULL",
+        "attributes" : { }
+      } ]
+    }, {
+      "name" : "auditResult",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_BLANK",
+        "attributes" : { }
+      } ]
+    }, {
+      "name" : "reason",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    } ],
+    "scenarios" : [ {
+      "id" : "put-api-question-audit-happy_path",
+      "name" : "happy_path",
+      "kind" : "happy-path",
+      "requestBody" : {
+        "questionId" : 1,
+        "auditResult" : "auditresult-sample",
+        "reason" : "reason-sample"
+      },
+      "expectedStatus" : 200,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "smoke", "contract" ]
+    }, {
+      "id" : "put-api-question-audit-questionId_missing",
+      "name" : "questionId_missing",
+      "kind" : "required-field",
+      "requestBody" : {
+        "auditResult" : "auditresult-sample",
+        "reason" : "reason-sample"
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "put-api-question-audit-auditResult_blank",
+      "name" : "auditResult_blank",
+      "kind" : "required-field",
+      "requestBody" : {
+        "questionId" : 1,
+        "auditResult" : "",
+        "reason" : "reason-sample"
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "put-api-question-audit-resource_not_found",
+      "name" : "resource_not_found",
+      "kind" : "whitebox",
+      "requestBody" : {
+        "questionId" : 1,
+        "auditResult" : "auditresult-sample",
+        "reason" : "reason-sample"
+      },
+      "expectedStatus" : 404,
+      "contractExecutable" : false,
+      "integrationExecutable" : false,
+      "tags" : [ "whitebox", "resource" ],
+      "notes" : "Requires a mocked or seeded service state where the target resource does not exist."
+    }, {
+      "id" : "put-api-question-audit-backend_failure",
+      "name" : "backend_failure",
+      "kind" : "whitebox",
+      "requestBody" : {
+        "questionId" : 1,
+        "auditResult" : "auditresult-sample",
+        "reason" : "reason-sample"
+      },
+      "expectedStatus" : 500,
+      "contractExecutable" : false,
+      "integrationExecutable" : false,
+      "tags" : [ "whitebox", "persistence" ],
+      "notes" : "Requires a mocked repository/service failure path."
+    } ]
+  }, {
+    "endpointKey" : "POST /api/question/category",
+    "handler" : "QuestionController#createCategory",
+    "httpMethod" : "POST",
+    "path" : "/api/question/category",
+    "requestBodyClass" : "com.maghert.examquestion.dto.QuestionCategoryUpsertRequest",
+    "validationBound" : true,
+    "fields" : [ {
+      "name" : "categoryId",
+      "type" : "java.lang.Long",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "name",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_BLANK",
+        "attributes" : { }
+      } ]
+    }, {
+      "name" : "parentId",
+      "type" : "java.lang.Long",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "isPersonal",
+      "type" : "java.lang.Boolean",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_NULL",
+        "attributes" : { }
+      } ]
+    }, {
+      "name" : "isDisabled",
+      "type" : "java.lang.Boolean",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    } ],
+    "scenarios" : [ {
+      "id" : "post-api-question-category-happy_path",
+      "name" : "happy_path",
+      "kind" : "happy-path",
+      "requestBody" : {
+        "categoryId" : 1,
+        "name" : "name-sample",
+        "parentId" : 1,
+        "isPersonal" : true,
+        "isDisabled" : true
+      },
+      "expectedStatus" : 200,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "smoke", "contract" ]
+    }, {
+      "id" : "post-api-question-category-name_blank",
+      "name" : "name_blank",
+      "kind" : "required-field",
+      "requestBody" : {
+        "categoryId" : 1,
+        "name" : "",
+        "parentId" : 1,
+        "isPersonal" : true,
+        "isDisabled" : true
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "post-api-question-category-isPersonal_missing",
+      "name" : "isPersonal_missing",
+      "kind" : "required-field",
+      "requestBody" : {
+        "categoryId" : 1,
+        "name" : "name-sample",
+        "parentId" : 1,
+        "isDisabled" : true
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    } ]
+  }, {
+    "endpointKey" : "PUT /api/question/category",
+    "handler" : "QuestionController#updateCategory",
+    "httpMethod" : "PUT",
+    "path" : "/api/question/category",
+    "requestBodyClass" : "com.maghert.examquestion.dto.QuestionCategoryUpsertRequest",
+    "validationBound" : true,
+    "fields" : [ {
+      "name" : "categoryId",
+      "type" : "java.lang.Long",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "name",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_BLANK",
+        "attributes" : { }
+      } ]
+    }, {
+      "name" : "parentId",
+      "type" : "java.lang.Long",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "isPersonal",
+      "type" : "java.lang.Boolean",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_NULL",
+        "attributes" : { }
+      } ]
+    }, {
+      "name" : "isDisabled",
+      "type" : "java.lang.Boolean",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    } ],
+    "scenarios" : [ {
+      "id" : "put-api-question-category-happy_path",
+      "name" : "happy_path",
+      "kind" : "happy-path",
+      "requestBody" : {
+        "categoryId" : 1,
+        "name" : "name-sample",
+        "parentId" : 1,
+        "isPersonal" : true,
+        "isDisabled" : true
+      },
+      "expectedStatus" : 200,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "smoke", "contract" ]
+    }, {
+      "id" : "put-api-question-category-name_blank",
+      "name" : "name_blank",
+      "kind" : "required-field",
+      "requestBody" : {
+        "categoryId" : 1,
+        "name" : "",
+        "parentId" : 1,
+        "isPersonal" : true,
+        "isDisabled" : true
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "put-api-question-category-isPersonal_missing",
+      "name" : "isPersonal_missing",
+      "kind" : "required-field",
+      "requestBody" : {
+        "categoryId" : 1,
+        "name" : "name-sample",
+        "parentId" : 1,
+        "isDisabled" : true
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "put-api-question-category-resource_not_found",
+      "name" : "resource_not_found",
+      "kind" : "whitebox",
+      "requestBody" : {
+        "categoryId" : 1,
+        "name" : "name-sample",
+        "parentId" : 1,
+        "isPersonal" : true,
+        "isDisabled" : true
+      },
+      "expectedStatus" : 404,
+      "contractExecutable" : false,
+      "integrationExecutable" : false,
+      "tags" : [ "whitebox", "resource" ],
+      "notes" : "Requires a mocked or seeded service state where the target resource does not exist."
+    }, {
+      "id" : "put-api-question-category-backend_failure",
+      "name" : "backend_failure",
+      "kind" : "whitebox",
+      "requestBody" : {
+        "categoryId" : 1,
+        "name" : "name-sample",
+        "parentId" : 1,
+        "isPersonal" : true,
+        "isDisabled" : true
+      },
+      "expectedStatus" : 500,
+      "contractExecutable" : false,
+      "integrationExecutable" : false,
+      "tags" : [ "whitebox", "persistence" ],
+      "notes" : "Requires a mocked repository/service failure path."
+    } ]
+  }, {
+    "endpointKey" : "POST /api/question/category/query",
+    "handler" : "QuestionController#queryCategories",
+    "httpMethod" : "POST",
+    "path" : "/api/question/category/query",
+    "requestBodyClass" : "com.maghert.examquestion.dto.QuestionCategoryQueryRequest",
+    "validationBound" : true,
+    "fields" : [ {
+      "name" : "categoryId",
+      "type" : "java.lang.Long",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "parentId",
+      "type" : "java.lang.Long",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "creatorId",
+      "type" : "java.lang.Long",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "isPersonal",
+      "type" : "java.lang.Boolean",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "isDisabled",
+      "type" : "java.lang.Boolean",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "keyword",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "pageNum",
+      "type" : "java.lang.Integer",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_NULL",
+        "attributes" : { }
+      }, {
+        "type" : "MIN",
+        "attributes" : {
+          "value" : 1
+        }
+      } ]
+    }, {
+      "name" : "pageSize",
+      "type" : "java.lang.Integer",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_NULL",
+        "attributes" : { }
+      }, {
+        "type" : "MIN",
+        "attributes" : {
+          "value" : 1
+        }
+      }, {
+        "type" : "MAX",
+        "attributes" : {
+          "value" : 100
+        }
+      } ]
+    } ],
+    "scenarios" : [ {
+      "id" : "post-api-question-category-query-happy_path",
+      "name" : "happy_path",
+      "kind" : "happy-path",
+      "requestBody" : {
+        "categoryId" : 1,
+        "parentId" : 1,
+        "creatorId" : 1,
+        "isPersonal" : true,
+        "isDisabled" : true,
+        "keyword" : "keyword-sample",
+        "pageNum" : 1,
+        "pageSize" : 1
+      },
+      "expectedStatus" : 200,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "smoke", "contract" ]
+    }, {
+      "id" : "post-api-question-category-query-pageNum_missing",
+      "name" : "pageNum_missing",
+      "kind" : "required-field",
+      "requestBody" : {
+        "categoryId" : 1,
+        "parentId" : 1,
+        "creatorId" : 1,
+        "isPersonal" : true,
+        "isDisabled" : true,
+        "keyword" : "keyword-sample",
+        "pageSize" : 1
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "post-api-question-category-query-pageNum_boundary",
+      "name" : "pageNum_boundary",
+      "kind" : "boundary",
+      "requestBody" : {
+        "categoryId" : 1,
+        "parentId" : 1,
+        "creatorId" : 1,
+        "isPersonal" : true,
+        "isDisabled" : true,
+        "keyword" : "keyword-sample",
+        "pageNum" : 0,
+        "pageSize" : 1
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "boundary", "contract" ]
+    }, {
+      "id" : "post-api-question-category-query-pageSize_missing",
+      "name" : "pageSize_missing",
+      "kind" : "required-field",
+      "requestBody" : {
+        "categoryId" : 1,
+        "parentId" : 1,
+        "creatorId" : 1,
+        "isPersonal" : true,
+        "isDisabled" : true,
+        "keyword" : "keyword-sample",
+        "pageNum" : 1
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "post-api-question-category-query-pageSize_boundary",
+      "name" : "pageSize_boundary",
+      "kind" : "boundary",
+      "requestBody" : {
+        "categoryId" : 1,
+        "parentId" : 1,
+        "creatorId" : 1,
+        "isPersonal" : true,
+        "isDisabled" : true,
+        "keyword" : "keyword-sample",
+        "pageNum" : 1,
+        "pageSize" : 0
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "boundary", "contract" ]
+    }, {
+      "id" : "post-api-question-category-query-pageSize_boundary",
+      "name" : "pageSize_boundary",
+      "kind" : "boundary",
+      "requestBody" : {
+        "categoryId" : 1,
+        "parentId" : 1,
+        "creatorId" : 1,
+        "isPersonal" : true,
+        "isDisabled" : true,
+        "keyword" : "keyword-sample",
+        "pageNum" : 1,
+        "pageSize" : 101
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "boundary", "contract" ]
+    } ]
+  }, {
+    "endpointKey" : "POST /api/question/create",
+    "handler" : "QuestionController#create",
+    "httpMethod" : "POST",
+    "path" : "/api/question/create",
+    "requestBodyClass" : "com.maghert.examquestion.dto.QuestionCreateRequest",
+    "validationBound" : true,
+    "fields" : [ {
+      "name" : "content",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_BLANK",
+        "attributes" : { }
+      } ]
+    }, {
+      "name" : "type",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_BLANK",
+        "attributes" : { }
+      } ]
+    }, {
+      "name" : "options",
+      "type" : "java.util.List",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "answer",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_BLANK",
+        "attributes" : { }
+      } ]
+    }, {
+      "name" : "categoryId",
+      "type" : "java.lang.Long",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_NULL",
+        "attributes" : { }
+      } ]
+    }, {
+      "name" : "analysis",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "difficulty",
+      "type" : "java.lang.Integer",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_NULL",
+        "attributes" : { }
+      }, {
+        "type" : "MIN",
+        "attributes" : {
+          "value" : 1
+        }
+      }, {
+        "type" : "MAX",
+        "attributes" : {
+          "value" : 5
+        }
+      } ]
+    } ],
+    "scenarios" : [ {
+      "id" : "post-api-question-create-happy_path",
+      "name" : "happy_path",
+      "kind" : "happy-path",
+      "requestBody" : {
+        "content" : "content-sample",
+        "type" : "type-sample",
+        "options" : [ "Option A", "Option B", "Option C", "Option D" ],
+        "answer" : "answer-sample",
+        "categoryId" : 1,
+        "analysis" : "analysis-sample",
+        "difficulty" : 1
+      },
+      "expectedStatus" : 200,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "smoke", "contract" ]
+    }, {
+      "id" : "post-api-question-create-content_blank",
+      "name" : "content_blank",
+      "kind" : "required-field",
+      "requestBody" : {
+        "content" : "",
+        "type" : "type-sample",
+        "options" : [ "Option A", "Option B", "Option C", "Option D" ],
+        "answer" : "answer-sample",
+        "categoryId" : 1,
+        "analysis" : "analysis-sample",
+        "difficulty" : 1
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "post-api-question-create-type_blank",
+      "name" : "type_blank",
+      "kind" : "required-field",
+      "requestBody" : {
+        "content" : "content-sample",
+        "type" : "",
+        "options" : [ "Option A", "Option B", "Option C", "Option D" ],
+        "answer" : "answer-sample",
+        "categoryId" : 1,
+        "analysis" : "analysis-sample",
+        "difficulty" : 1
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "post-api-question-create-answer_blank",
+      "name" : "answer_blank",
+      "kind" : "required-field",
+      "requestBody" : {
+        "content" : "content-sample",
+        "type" : "type-sample",
+        "options" : [ "Option A", "Option B", "Option C", "Option D" ],
+        "answer" : "",
+        "categoryId" : 1,
+        "analysis" : "analysis-sample",
+        "difficulty" : 1
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "post-api-question-create-categoryId_missing",
+      "name" : "categoryId_missing",
+      "kind" : "required-field",
+      "requestBody" : {
+        "content" : "content-sample",
+        "type" : "type-sample",
+        "options" : [ "Option A", "Option B", "Option C", "Option D" ],
+        "answer" : "answer-sample",
+        "analysis" : "analysis-sample",
+        "difficulty" : 1
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "post-api-question-create-difficulty_missing",
+      "name" : "difficulty_missing",
+      "kind" : "required-field",
+      "requestBody" : {
+        "content" : "content-sample",
+        "type" : "type-sample",
+        "options" : [ "Option A", "Option B", "Option C", "Option D" ],
+        "answer" : "answer-sample",
+        "categoryId" : 1,
+        "analysis" : "analysis-sample"
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "post-api-question-create-difficulty_boundary",
+      "name" : "difficulty_boundary",
+      "kind" : "boundary",
+      "requestBody" : {
+        "content" : "content-sample",
+        "type" : "type-sample",
+        "options" : [ "Option A", "Option B", "Option C", "Option D" ],
+        "answer" : "answer-sample",
+        "categoryId" : 1,
+        "analysis" : "analysis-sample",
+        "difficulty" : 0
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "boundary", "contract" ]
+    }, {
+      "id" : "post-api-question-create-difficulty_boundary",
+      "name" : "difficulty_boundary",
+      "kind" : "boundary",
+      "requestBody" : {
+        "content" : "content-sample",
+        "type" : "type-sample",
+        "options" : [ "Option A", "Option B", "Option C", "Option D" ],
+        "answer" : "answer-sample",
+        "categoryId" : 1,
+        "analysis" : "analysis-sample",
+        "difficulty" : 6
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "boundary", "contract" ]
+    } ]
+  }, {
+    "endpointKey" : "DELETE /api/question/delete",
+    "handler" : "QuestionController#delete",
+    "httpMethod" : "DELETE",
+    "path" : "/api/question/delete",
+    "requestBodyClass" : "com.maghert.examquestion.dto.QuestionDeleteRequest",
+    "validationBound" : true,
+    "fields" : [ {
+      "name" : "questionId",
+      "type" : "java.lang.Long",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_NULL",
+        "attributes" : { }
+      } ]
+    } ],
+    "scenarios" : [ {
+      "id" : "delete-api-question-delete-happy_path",
+      "name" : "happy_path",
+      "kind" : "happy-path",
+      "requestBody" : {
+        "questionId" : 1
+      },
+      "expectedStatus" : 200,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "smoke", "contract" ]
+    }, {
+      "id" : "delete-api-question-delete-questionId_missing",
+      "name" : "questionId_missing",
+      "kind" : "required-field",
+      "requestBody" : { },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "delete-api-question-delete-resource_not_found",
+      "name" : "resource_not_found",
+      "kind" : "whitebox",
+      "requestBody" : {
+        "questionId" : 1
+      },
+      "expectedStatus" : 404,
+      "contractExecutable" : false,
+      "integrationExecutable" : false,
+      "tags" : [ "whitebox", "resource" ],
+      "notes" : "Requires a mocked or seeded service state where the target resource does not exist."
+    }, {
+      "id" : "delete-api-question-delete-backend_failure",
+      "name" : "backend_failure",
+      "kind" : "whitebox",
+      "requestBody" : {
+        "questionId" : 1
+      },
+      "expectedStatus" : 500,
+      "contractExecutable" : false,
+      "integrationExecutable" : false,
+      "tags" : [ "whitebox", "persistence" ],
+      "notes" : "Requires a mocked repository/service failure path."
+    } ]
+  }, {
+    "endpointKey" : "GET /api/question/export",
+    "handler" : "QuestionController#exportQuestions",
+    "httpMethod" : "GET",
+    "path" : "/api/question/export",
+    "validationBound" : false,
+    "fields" : [ ],
+    "scenarios" : [ {
+      "id" : "get-api-question-export-happy_path",
+      "name" : "happy_path",
+      "kind" : "happy-path",
+      "requestBody" : { },
+      "expectedStatus" : 200,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "smoke", "contract" ]
+    } ]
+  }, {
+    "endpointKey" : "POST /api/question/import",
+    "handler" : "QuestionController#importQuestions",
+    "httpMethod" : "POST",
+    "path" : "/api/question/import",
+    "validationBound" : false,
+    "fields" : [ ],
+    "scenarios" : [ {
+      "id" : "post-api-question-import-happy_path",
+      "name" : "happy_path",
+      "kind" : "happy-path",
+      "requestBody" : { },
+      "expectedStatus" : 200,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "smoke", "contract" ]
+    } ]
+  }, {
+    "endpointKey" : "POST /api/question/query",
+    "handler" : "QuestionController#query",
+    "httpMethod" : "POST",
+    "path" : "/api/question/query",
+    "requestBodyClass" : "com.maghert.examquestion.dto.QuestionQueryRequest",
+    "validationBound" : true,
+    "fields" : [ {
+      "name" : "questionId",
+      "type" : "java.lang.Long",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "categoryId",
+      "type" : "java.lang.Long",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "creatorId",
+      "type" : "java.lang.Long",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "keyword",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "type",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "difficulty",
+      "type" : "java.lang.Integer",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "auditStatus",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "isDisabled",
+      "type" : "java.lang.Boolean",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "isReferenced",
+      "type" : "java.lang.Boolean",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "pageNum",
+      "type" : "java.lang.Integer",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_NULL",
+        "attributes" : { }
+      }, {
+        "type" : "MIN",
+        "attributes" : {
+          "value" : 1
+        }
+      } ]
+    }, {
+      "name" : "pageSize",
+      "type" : "java.lang.Integer",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_NULL",
+        "attributes" : { }
+      }, {
+        "type" : "MIN",
+        "attributes" : {
+          "value" : 1
+        }
+      }, {
+        "type" : "MAX",
+        "attributes" : {
+          "value" : 100
+        }
+      } ]
+    } ],
+    "scenarios" : [ {
+      "id" : "post-api-question-query-happy_path",
+      "name" : "happy_path",
+      "kind" : "happy-path",
+      "requestBody" : {
+        "questionId" : 1,
+        "categoryId" : 1,
+        "creatorId" : 1,
+        "keyword" : "keyword-sample",
+        "type" : "type-sample",
+        "difficulty" : 1,
+        "auditStatus" : "auditstatus-sample",
+        "isDisabled" : true,
+        "isReferenced" : true,
+        "pageNum" : 1,
+        "pageSize" : 1
+      },
+      "expectedStatus" : 200,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "smoke", "contract" ]
+    }, {
+      "id" : "post-api-question-query-pageNum_missing",
+      "name" : "pageNum_missing",
+      "kind" : "required-field",
+      "requestBody" : {
+        "questionId" : 1,
+        "categoryId" : 1,
+        "creatorId" : 1,
+        "keyword" : "keyword-sample",
+        "type" : "type-sample",
+        "difficulty" : 1,
+        "auditStatus" : "auditstatus-sample",
+        "isDisabled" : true,
+        "isReferenced" : true,
+        "pageSize" : 1
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "post-api-question-query-pageNum_boundary",
+      "name" : "pageNum_boundary",
+      "kind" : "boundary",
+      "requestBody" : {
+        "questionId" : 1,
+        "categoryId" : 1,
+        "creatorId" : 1,
+        "keyword" : "keyword-sample",
+        "type" : "type-sample",
+        "difficulty" : 1,
+        "auditStatus" : "auditstatus-sample",
+        "isDisabled" : true,
+        "isReferenced" : true,
+        "pageNum" : 0,
+        "pageSize" : 1
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "boundary", "contract" ]
+    }, {
+      "id" : "post-api-question-query-pageSize_missing",
+      "name" : "pageSize_missing",
+      "kind" : "required-field",
+      "requestBody" : {
+        "questionId" : 1,
+        "categoryId" : 1,
+        "creatorId" : 1,
+        "keyword" : "keyword-sample",
+        "type" : "type-sample",
+        "difficulty" : 1,
+        "auditStatus" : "auditstatus-sample",
+        "isDisabled" : true,
+        "isReferenced" : true,
+        "pageNum" : 1
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "post-api-question-query-pageSize_boundary",
+      "name" : "pageSize_boundary",
+      "kind" : "boundary",
+      "requestBody" : {
+        "questionId" : 1,
+        "categoryId" : 1,
+        "creatorId" : 1,
+        "keyword" : "keyword-sample",
+        "type" : "type-sample",
+        "difficulty" : 1,
+        "auditStatus" : "auditstatus-sample",
+        "isDisabled" : true,
+        "isReferenced" : true,
+        "pageNum" : 1,
+        "pageSize" : 0
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "boundary", "contract" ]
+    }, {
+      "id" : "post-api-question-query-pageSize_boundary",
+      "name" : "pageSize_boundary",
+      "kind" : "boundary",
+      "requestBody" : {
+        "questionId" : 1,
+        "categoryId" : 1,
+        "creatorId" : 1,
+        "keyword" : "keyword-sample",
+        "type" : "type-sample",
+        "difficulty" : 1,
+        "auditStatus" : "auditstatus-sample",
+        "isDisabled" : true,
+        "isReferenced" : true,
+        "pageNum" : 1,
+        "pageSize" : 101
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "boundary", "contract" ]
+    } ]
+  }, {
+    "endpointKey" : "PUT /api/question/toggle-status",
+    "handler" : "QuestionController#toggleStatus",
+    "httpMethod" : "PUT",
+    "path" : "/api/question/toggle-status",
+    "requestBodyClass" : "com.maghert.examquestion.dto.QuestionToggleStatusRequest",
+    "validationBound" : true,
+    "fields" : [ {
+      "name" : "questionId",
+      "type" : "java.lang.Long",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_NULL",
+        "attributes" : { }
+      } ]
+    }, {
+      "name" : "isDisabled",
+      "type" : "java.lang.Boolean",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_NULL",
+        "attributes" : { }
+      } ]
+    } ],
+    "scenarios" : [ {
+      "id" : "put-api-question-toggle-status-happy_path",
+      "name" : "happy_path",
+      "kind" : "happy-path",
+      "requestBody" : {
+        "questionId" : 1,
+        "isDisabled" : true
+      },
+      "expectedStatus" : 200,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "smoke", "contract" ]
+    }, {
+      "id" : "put-api-question-toggle-status-questionId_missing",
+      "name" : "questionId_missing",
+      "kind" : "required-field",
+      "requestBody" : {
+        "isDisabled" : true
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "put-api-question-toggle-status-isDisabled_missing",
+      "name" : "isDisabled_missing",
+      "kind" : "required-field",
+      "requestBody" : {
+        "questionId" : 1
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "put-api-question-toggle-status-resource_not_found",
+      "name" : "resource_not_found",
+      "kind" : "whitebox",
+      "requestBody" : {
+        "questionId" : 1,
+        "isDisabled" : true
+      },
+      "expectedStatus" : 404,
+      "contractExecutable" : false,
+      "integrationExecutable" : false,
+      "tags" : [ "whitebox", "resource" ],
+      "notes" : "Requires a mocked or seeded service state where the target resource does not exist."
+    }, {
+      "id" : "put-api-question-toggle-status-backend_failure",
+      "name" : "backend_failure",
+      "kind" : "whitebox",
+      "requestBody" : {
+        "questionId" : 1,
+        "isDisabled" : true
+      },
+      "expectedStatus" : 500,
+      "contractExecutable" : false,
+      "integrationExecutable" : false,
+      "tags" : [ "whitebox", "persistence" ],
+      "notes" : "Requires a mocked repository/service failure path."
+    } ]
+  }, {
+    "endpointKey" : "PUT /api/question/update",
+    "handler" : "QuestionController#update",
+    "httpMethod" : "PUT",
+    "path" : "/api/question/update",
+    "requestBodyClass" : "com.maghert.examquestion.dto.QuestionUpdateRequest",
+    "validationBound" : true,
+    "fields" : [ {
+      "name" : "questionId",
+      "type" : "java.lang.Long",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_NULL",
+        "attributes" : { }
+      } ]
+    }, {
+      "name" : "content",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "options",
+      "type" : "java.util.List",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "answer",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "analysis",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "difficulty",
+      "type" : "java.lang.Integer",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "MIN",
+        "attributes" : {
+          "value" : 1
+        }
+      }, {
+        "type" : "MAX",
+        "attributes" : {
+          "value" : 5
+        }
+      } ]
+    } ],
+    "scenarios" : [ {
+      "id" : "put-api-question-update-happy_path",
+      "name" : "happy_path",
+      "kind" : "happy-path",
+      "requestBody" : {
+        "questionId" : 1,
+        "content" : "content-sample",
+        "options" : [ "Option A", "Option B", "Option C", "Option D" ],
+        "answer" : "answer-sample",
+        "analysis" : "analysis-sample",
+        "difficulty" : 1
+      },
+      "expectedStatus" : 200,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "smoke", "contract" ]
+    }, {
+      "id" : "put-api-question-update-questionId_missing",
+      "name" : "questionId_missing",
+      "kind" : "required-field",
+      "requestBody" : {
+        "content" : "content-sample",
+        "options" : [ "Option A", "Option B", "Option C", "Option D" ],
+        "answer" : "answer-sample",
+        "analysis" : "analysis-sample",
+        "difficulty" : 1
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "put-api-question-update-difficulty_boundary",
+      "name" : "difficulty_boundary",
+      "kind" : "boundary",
+      "requestBody" : {
+        "questionId" : 1,
+        "content" : "content-sample",
+        "options" : [ "Option A", "Option B", "Option C", "Option D" ],
+        "answer" : "answer-sample",
+        "analysis" : "analysis-sample",
+        "difficulty" : 0
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "boundary", "contract" ]
+    }, {
+      "id" : "put-api-question-update-difficulty_boundary",
+      "name" : "difficulty_boundary",
+      "kind" : "boundary",
+      "requestBody" : {
+        "questionId" : 1,
+        "content" : "content-sample",
+        "options" : [ "Option A", "Option B", "Option C", "Option D" ],
+        "answer" : "answer-sample",
+        "analysis" : "analysis-sample",
+        "difficulty" : 6
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "boundary", "contract" ]
+    }, {
+      "id" : "put-api-question-update-resource_not_found",
+      "name" : "resource_not_found",
+      "kind" : "whitebox",
+      "requestBody" : {
+        "questionId" : 1,
+        "content" : "content-sample",
+        "options" : [ "Option A", "Option B", "Option C", "Option D" ],
+        "answer" : "answer-sample",
+        "analysis" : "analysis-sample",
+        "difficulty" : 1
+      },
+      "expectedStatus" : 404,
+      "contractExecutable" : false,
+      "integrationExecutable" : false,
+      "tags" : [ "whitebox", "resource" ],
+      "notes" : "Requires a mocked or seeded service state where the target resource does not exist."
+    }, {
+      "id" : "put-api-question-update-backend_failure",
+      "name" : "backend_failure",
+      "kind" : "whitebox",
+      "requestBody" : {
+        "questionId" : 1,
+        "content" : "content-sample",
+        "options" : [ "Option A", "Option B", "Option C", "Option D" ],
+        "answer" : "answer-sample",
+        "analysis" : "analysis-sample",
+        "difficulty" : 1
+      },
+      "expectedStatus" : 500,
+      "contractExecutable" : false,
+      "integrationExecutable" : false,
+      "tags" : [ "whitebox", "persistence" ],
+      "notes" : "Requires a mocked repository/service failure path."
+    } ]
+  } ]
+}

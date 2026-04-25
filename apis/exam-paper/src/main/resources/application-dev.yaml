@@ -1,0 +1,7 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${EXAM_NACOS_ADDR}
+  datasource:
+    url: jdbc:mysql://${EXAM_DB_HOST}:${EXAM_DB_PORT}/${EXAM_DB_NAME}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC

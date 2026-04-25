@@ -1,0 +1,110 @@
+server:
+  port: 8080
+
+spring:
+  profiles:
+    active: dev, local
+  main:
+    web-application-type: reactive
+  application:
+    name: exam-gateway
+  cloud:
+    nacos:
+      discovery:
+        username: ${EXAM_NACOS_USERNAME}
+        password: ${EXAM_NACOS_PASSWORD}
+    gateway:
+      server:
+        webflux:
+          default-filters:
+            - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_FIRST
+          globalcors:
+            add-to-simple-url-handler-mapping: true
+            cors-configurations:
+              '[/**]':
+                allowedOriginPatterns:
+                  - "http://127.0.0.1:*"
+                  - "http://localhost:*"
+                allowedMethods:
+                  - GET
+                  - POST
+                  - PUT
+                  - DELETE
+                  - PATCH
+                  - OPTIONS
+                allowedHeaders:
+                  - "*"
+                exposedHeaders:
+                  - X-Request-Id
+                  - Content-Disposition
+                allowCredentials: true
+          routes:
+            - id: item
+              uri: lb://exam-account
+              predicates:
+                - Path=/api/account/**
+            - id: class
+              uri: lb://exam-class
+              predicates:
+                - Path=/api/class/**
+            - id: system
+              uri: lb://exam-system
+              predicates:
+                - Path=/api/system/**
+            - id: question
+              uri: lb://exam-question
+              predicates:
+                - Path=/api/question/**
+            - id: paper
+              uri: lb://exam-paper
+              predicates:
+                - Path=/api/paper/**
+            - id: core
+              uri: lb://exam-core
+              predicates:
+                - Path=/api/exam/core/**
+            - id: score
+              uri: lb://exam-score
+              predicates:
+                - Path=/api/score/**
+            - id: resource
+              uri: lb://exam-resource
+              predicates:
+                - Path=/api/resource/**
+            - id: issue-core
+              uri: lb://exam-issue-core
+              predicates:
+                - Path=/api/issue/core/**
+            - id: realtime
+              uri: lb://exam-realtime
+              predicates:
+                - Path=/api/exam/realtime/**
+            - id: issue-notify
+              uri: lb://exam-issue-notify
+              predicates:
+                - Path=/api/issue/notify/**
+  datasource:
+    username: ${EXAM_DB_USERNAME}
+    password: ${EXAM_DB_PASSWORD}
+  data:
+    redis:
+      password: ${EXAM_REDIS_PASSWORD}
+      database: ${EXAM_REDIS_DATABASE}
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 0
+
+exam:
+  auth:
+    ignore-paths:
+      - /api/account/login/**
+      - /api/account/create/**
+      - /api/account/create
+      - /api/account/send/**
+  jwt:
+    secret: "mySuperSecretKeyThatIsAtLeast32BytesLongForHS512"
+    access-token-expiration: 1800000
+    refresh-token-expiration: 604800000

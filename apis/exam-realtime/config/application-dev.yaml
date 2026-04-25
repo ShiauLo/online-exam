@@ -1,0 +1,25 @@
+mysql:
+  host: ${EXAM_DB_HOST}
+  port: ${EXAM_DB_PORT}
+  database: ${EXAM_DB_NAME}
+  user: ${EXAM_DB_USERNAME}
+  password: ${EXAM_DB_PASSWORD}
+
+redis:
+  host: ${EXAM_REDIS_HOST}
+  port: ${EXAM_REDIS_PORT}
+  database: ${EXAM_REDIS_DATABASE}
+  password: ${EXAM_REDIS_PASSWORD}
+
+nacos:
+  serverAddr: ${EXAM_NACOS_ADDR}
+  username: ${EXAM_NACOS_USERNAME}
+  password: ${EXAM_NACOS_PASSWORD}
+  serviceIp: ${EXAM_REALTIME_IP}
+  servicePort: ${EXAM_REALTIME_PORT}
+
+downstream:
+  examCoreBaseUrl: ${EXAM_REALTIME_EXAM_CORE_BASE_URL}
+
+jwt:
+  secret: ${EXAM_JWT_SECRET}

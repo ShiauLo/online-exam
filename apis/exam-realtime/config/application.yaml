@@ -1,0 +1,45 @@
+app:
+  name: exam-realtime
+  profiles: dev,local
+
+server:
+  host: 0.0.0.0
+  port: 8090
+  socketPath: /socket.io
+  corsOrigins: "*"
+
+mysql:
+  host: 127.0.0.1
+  port: 3306
+  database: online_exam_db
+  user: root
+  password: ""
+  poolSize: 10
+
+redis:
+  host: 127.0.0.1
+  port: 6379
+  database: 0
+  password: ""
+
+nacos:
+  enabled: true
+  serverAddr: 127.0.0.1:8848
+  username: nacos
+  password: ""
+  namespace: public
+  group: DEFAULT_GROUP
+  serviceIp: 127.0.0.1
+  servicePort: 8090
+  heartbeatIntervalMs: 5000
+
+downstream:
+  examCoreBaseUrl: http://127.0.0.1:8086
+
+jwt:
+  secret: "mySuperSecretKeyThatIsAtLeast32BytesLongForHS512"
+
+realtime:
+  ttlHoursAfterExam: 24
+  autoSubmitLockSeconds: 120
+  countdownIntervalMs: 1000

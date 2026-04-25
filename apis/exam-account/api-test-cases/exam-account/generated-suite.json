@@ -1,0 +1,1026 @@
+{
+  "serviceName" : "exam-account",
+  "generatedAt" : "2026-04-03T05:40:51.683490400+08:00",
+  "endpoints" : [ {
+    "endpointKey" : "PUT /api/account/audit",
+    "handler" : "AccountController#accountAudit",
+    "httpMethod" : "PUT",
+    "path" : "/api/account/audit",
+    "requestBodyClass" : "com.maghert.examaccount.pojo.dto.AccountAuditDTO",
+    "validationBound" : true,
+    "fields" : [ {
+      "name" : "id",
+      "type" : "java.lang.Long",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_NULL",
+        "attributes" : { }
+      } ]
+    }, {
+      "name" : "auditResult",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_BLANK",
+        "attributes" : { }
+      } ]
+    } ],
+    "scenarios" : [ {
+      "id" : "put-api-account-audit-happy_path",
+      "name" : "happy_path",
+      "kind" : "happy-path",
+      "requestBody" : {
+        "id" : 1,
+        "auditResult" : "auditresult-sample"
+      },
+      "expectedStatus" : 200,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "smoke", "contract" ]
+    }, {
+      "id" : "put-api-account-audit-id_missing",
+      "name" : "id_missing",
+      "kind" : "required-field",
+      "requestBody" : {
+        "auditResult" : "auditresult-sample"
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "put-api-account-audit-auditResult_blank",
+      "name" : "auditResult_blank",
+      "kind" : "required-field",
+      "requestBody" : {
+        "id" : 1,
+        "auditResult" : ""
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "put-api-account-audit-resource_not_found",
+      "name" : "resource_not_found",
+      "kind" : "whitebox",
+      "requestBody" : {
+        "id" : 1,
+        "auditResult" : "auditresult-sample"
+      },
+      "expectedStatus" : 404,
+      "contractExecutable" : false,
+      "integrationExecutable" : false,
+      "tags" : [ "whitebox", "resource" ],
+      "notes" : "Requires a mocked or seeded service state where the target resource does not exist."
+    }, {
+      "id" : "put-api-account-audit-backend_failure",
+      "name" : "backend_failure",
+      "kind" : "whitebox",
+      "requestBody" : {
+        "id" : 1,
+        "auditResult" : "auditresult-sample"
+      },
+      "expectedStatus" : 500,
+      "contractExecutable" : false,
+      "integrationExecutable" : false,
+      "tags" : [ "whitebox", "persistence" ],
+      "notes" : "Requires a mocked repository/service failure path."
+    } ]
+  }, {
+    "endpointKey" : "POST /api/account/create",
+    "handler" : "AccountController#accountCreate",
+    "httpMethod" : "POST",
+    "path" : "/api/account/create",
+    "requestBodyClass" : "com.maghert.examcommon.pojo.dto.AccountCreateDTO",
+    "validationBound" : true,
+    "fields" : [ {
+      "name" : "username",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "password",
+      "type" : "java.lang.String",
+      "semanticHints" : [ "PASSWORD" ],
+      "constraints" : [ ]
+    }, {
+      "name" : "realName",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "roleId",
+      "type" : "java.lang.Integer",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "MIN",
+        "attributes" : {
+          "value" : 3
+        }
+      }, {
+        "type" : "MAX",
+        "attributes" : {
+          "value" : 6
+        }
+      } ]
+    }, {
+      "name" : "roleType",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "phoneNumber",
+      "type" : "java.lang.String",
+      "semanticHints" : [ "PHONE_NUMBER" ],
+      "constraints" : [ {
+        "type" : "PATTERN",
+        "attributes" : {
+          "regexp" : "^$|^1[3-9]\\d{9}$"
+        }
+      } ]
+    }, {
+      "name" : "email",
+      "type" : "java.lang.String",
+      "semanticHints" : [ "EMAIL" ],
+      "constraints" : [ {
+        "type" : "EMAIL",
+        "attributes" : { }
+      } ]
+    } ],
+    "scenarios" : [ {
+      "id" : "post-api-account-create-happy_path",
+      "name" : "happy_path",
+      "kind" : "happy-path",
+      "requestBody" : {
+        "username" : "username-sample",
+        "password" : "Passw0rd!",
+        "realName" : "realname-sample",
+        "roleId" : 3,
+        "roleType" : "roletype-sample",
+        "phoneNumber" : "13800138000",
+        "email" : "user@example.com"
+      },
+      "expectedStatus" : 200,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "smoke", "contract" ]
+    }, {
+      "id" : "post-api-account-create-roleId_boundary",
+      "name" : "roleId_boundary",
+      "kind" : "boundary",
+      "requestBody" : {
+        "username" : "username-sample",
+        "password" : "Passw0rd!",
+        "realName" : "realname-sample",
+        "roleId" : 2,
+        "roleType" : "roletype-sample",
+        "phoneNumber" : "13800138000",
+        "email" : "user@example.com"
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "boundary", "contract" ]
+    }, {
+      "id" : "post-api-account-create-roleId_boundary",
+      "name" : "roleId_boundary",
+      "kind" : "boundary",
+      "requestBody" : {
+        "username" : "username-sample",
+        "password" : "Passw0rd!",
+        "realName" : "realname-sample",
+        "roleId" : 7,
+        "roleType" : "roletype-sample",
+        "phoneNumber" : "13800138000",
+        "email" : "user@example.com"
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "boundary", "contract" ]
+    }, {
+      "id" : "post-api-account-create-phoneNumber_invalid_format",
+      "name" : "phoneNumber_invalid_format",
+      "kind" : "format",
+      "requestBody" : {
+        "username" : "username-sample",
+        "password" : "Passw0rd!",
+        "realName" : "realname-sample",
+        "roleId" : 3,
+        "roleType" : "roletype-sample",
+        "phoneNumber" : "123456",
+        "email" : "user@example.com"
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "format", "contract" ]
+    }, {
+      "id" : "post-api-account-create-email_invalid_format",
+      "name" : "email_invalid_format",
+      "kind" : "format",
+      "requestBody" : {
+        "username" : "username-sample",
+        "password" : "Passw0rd!",
+        "realName" : "realname-sample",
+        "roleId" : 3,
+        "roleType" : "roletype-sample",
+        "phoneNumber" : "13800138000",
+        "email" : "invalid-email"
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "format", "contract" ]
+    } ]
+  }, {
+    "endpointKey" : "DELETE /api/account/delete",
+    "handler" : "AccountController#accountDelete",
+    "httpMethod" : "DELETE",
+    "path" : "/api/account/delete",
+    "requestBodyClass" : "com.maghert.examcommon.pojo.dto.AccountDeleteDTO",
+    "validationBound" : true,
+    "fields" : [ {
+      "name" : "id",
+      "type" : "java.lang.Long",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_NULL",
+        "attributes" : { }
+      } ]
+    } ],
+    "scenarios" : [ {
+      "id" : "delete-api-account-delete-happy_path",
+      "name" : "happy_path",
+      "kind" : "happy-path",
+      "requestBody" : {
+        "id" : 1
+      },
+      "expectedStatus" : 200,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "smoke", "contract" ]
+    }, {
+      "id" : "delete-api-account-delete-id_missing",
+      "name" : "id_missing",
+      "kind" : "required-field",
+      "requestBody" : { },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "delete-api-account-delete-resource_not_found",
+      "name" : "resource_not_found",
+      "kind" : "whitebox",
+      "requestBody" : {
+        "id" : 1
+      },
+      "expectedStatus" : 404,
+      "contractExecutable" : false,
+      "integrationExecutable" : false,
+      "tags" : [ "whitebox", "resource" ],
+      "notes" : "Requires a mocked or seeded service state where the target resource does not exist."
+    }, {
+      "id" : "delete-api-account-delete-backend_failure",
+      "name" : "backend_failure",
+      "kind" : "whitebox",
+      "requestBody" : {
+        "id" : 1
+      },
+      "expectedStatus" : 500,
+      "contractExecutable" : false,
+      "integrationExecutable" : false,
+      "tags" : [ "whitebox", "persistence" ],
+      "notes" : "Requires a mocked repository/service failure path."
+    } ]
+  }, {
+    "endpointKey" : "POST /api/account/freeze",
+    "handler" : "AccountController#accountFreeze",
+    "httpMethod" : "POST",
+    "path" : "/api/account/freeze",
+    "requestBodyClass" : "com.maghert.examcommon.pojo.dto.AccountFreezeDTO",
+    "validationBound" : true,
+    "fields" : [ {
+      "name" : "id",
+      "type" : "java.lang.Long",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_NULL",
+        "attributes" : { }
+      } ]
+    }, {
+      "name" : "isFrozen",
+      "type" : "java.lang.Boolean",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_NULL",
+        "attributes" : { }
+      } ]
+    }, {
+      "name" : "reason",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    } ],
+    "scenarios" : [ {
+      "id" : "post-api-account-freeze-happy_path",
+      "name" : "happy_path",
+      "kind" : "happy-path",
+      "requestBody" : {
+        "id" : 1,
+        "isFrozen" : true,
+        "reason" : "reason-sample"
+      },
+      "expectedStatus" : 200,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "smoke", "contract" ]
+    }, {
+      "id" : "post-api-account-freeze-id_missing",
+      "name" : "id_missing",
+      "kind" : "required-field",
+      "requestBody" : {
+        "isFrozen" : true,
+        "reason" : "reason-sample"
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "post-api-account-freeze-isFrozen_missing",
+      "name" : "isFrozen_missing",
+      "kind" : "required-field",
+      "requestBody" : {
+        "id" : 1,
+        "reason" : "reason-sample"
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "post-api-account-freeze-resource_not_found",
+      "name" : "resource_not_found",
+      "kind" : "whitebox",
+      "requestBody" : {
+        "id" : 1,
+        "isFrozen" : true,
+        "reason" : "reason-sample"
+      },
+      "expectedStatus" : 404,
+      "contractExecutable" : false,
+      "integrationExecutable" : false,
+      "tags" : [ "whitebox", "resource" ],
+      "notes" : "Requires a mocked or seeded service state where the target resource does not exist."
+    }, {
+      "id" : "post-api-account-freeze-backend_failure",
+      "name" : "backend_failure",
+      "kind" : "whitebox",
+      "requestBody" : {
+        "id" : 1,
+        "isFrozen" : true,
+        "reason" : "reason-sample"
+      },
+      "expectedStatus" : 500,
+      "contractExecutable" : false,
+      "integrationExecutable" : false,
+      "tags" : [ "whitebox", "persistence" ],
+      "notes" : "Requires a mocked repository/service failure path."
+    } ]
+  }, {
+    "endpointKey" : "POST /api/account/login",
+    "handler" : "AccountController#accountLogin",
+    "httpMethod" : "POST",
+    "path" : "/api/account/login",
+    "requestBodyClass" : "com.maghert.examcommon.pojo.dto.LoginDTO",
+    "validationBound" : true,
+    "fields" : [ {
+      "name" : "loginType",
+      "type" : "java.lang.String",
+      "semanticHints" : [ "LOGIN_TYPE" ],
+      "constraints" : [ {
+        "type" : "NOT_BLANK",
+        "attributes" : { }
+      } ]
+    }, {
+      "name" : "account",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "password",
+      "type" : "java.lang.String",
+      "semanticHints" : [ "PASSWORD" ],
+      "constraints" : [ ]
+    }, {
+      "name" : "phone",
+      "type" : "java.lang.String",
+      "semanticHints" : [ "PHONE_NUMBER" ],
+      "constraints" : [ ]
+    }, {
+      "name" : "verifyCode",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    } ],
+    "scenarios" : [ {
+      "id" : "post-api-account-login-happy_path",
+      "name" : "happy_path",
+      "kind" : "happy-path",
+      "requestBody" : {
+        "loginType" : "password_login",
+        "account" : "account-sample",
+        "password" : "Passw0rd!",
+        "phone" : "13800138000",
+        "verifyCode" : "verifycode-sample"
+      },
+      "expectedStatus" : 200,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "smoke", "contract" ]
+    }, {
+      "id" : "post-api-account-login-loginType_blank",
+      "name" : "loginType_blank",
+      "kind" : "required-field",
+      "requestBody" : {
+        "loginType" : "",
+        "account" : "account-sample",
+        "password" : "Passw0rd!",
+        "phone" : "13800138000",
+        "verifyCode" : "verifycode-sample"
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "post-api-account-login-unsupported_login_type",
+      "name" : "unsupported_login_type",
+      "kind" : "business-rule",
+      "requestBody" : {
+        "loginType" : "unsupported_login_type",
+        "account" : "account-sample",
+        "password" : "Passw0rd!",
+        "phone" : "13800138000",
+        "verifyCode" : "verifycode-sample"
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "auth", "contract" ],
+      "notes" : "Covers invalid login strategy selection."
+    } ]
+  }, {
+    "endpointKey" : "POST /api/account/logout",
+    "handler" : "AccountController#accountLogOut",
+    "httpMethod" : "POST",
+    "path" : "/api/account/logout",
+    "requestBodyClass" : "com.maghert.examcommon.pojo.dto.AccountLogOutDTO",
+    "validationBound" : true,
+    "fields" : [ {
+      "name" : "userId",
+      "type" : "java.lang.Long",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_NULL",
+        "attributes" : { }
+      } ]
+    }, {
+      "name" : "refreshToken",
+      "type" : "java.lang.String",
+      "semanticHints" : [ "TOKEN" ],
+      "constraints" : [ {
+        "type" : "NOT_NULL",
+        "attributes" : { }
+      } ]
+    } ],
+    "scenarios" : [ {
+      "id" : "post-api-account-logout-happy_path",
+      "name" : "happy_path",
+      "kind" : "happy-path",
+      "requestBody" : {
+        "userId" : 1,
+        "refreshToken" : "mock-token"
+      },
+      "expectedStatus" : 200,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "smoke", "contract" ]
+    }, {
+      "id" : "post-api-account-logout-userId_missing",
+      "name" : "userId_missing",
+      "kind" : "required-field",
+      "requestBody" : {
+        "refreshToken" : "mock-token"
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "post-api-account-logout-refreshToken_missing",
+      "name" : "refreshToken_missing",
+      "kind" : "required-field",
+      "requestBody" : {
+        "userId" : 1
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "post-api-account-logout-cache_delete_failure",
+      "name" : "cache_delete_failure",
+      "kind" : "whitebox",
+      "requestBody" : {
+        "userId" : 1,
+        "refreshToken" : "mock-token"
+      },
+      "expectedStatus" : 500,
+      "contractExecutable" : false,
+      "integrationExecutable" : false,
+      "tags" : [ "whitebox", "cache" ],
+      "notes" : "Requires Redis delete failure simulation."
+    } ]
+  }, {
+    "endpointKey" : "POST /api/account/query",
+    "handler" : "AccountController#accountQuery",
+    "httpMethod" : "POST",
+    "path" : "/api/account/query",
+    "requestBodyClass" : "com.maghert.examcommon.pojo.dto.AccountQueryDTO",
+    "validationBound" : true,
+    "fields" : [ {
+      "name" : "userId",
+      "type" : "java.lang.Long",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "classId",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "keyword",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "roleId",
+      "type" : "java.lang.Integer",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "roleType",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "pageNum",
+      "type" : "java.lang.Long",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_NULL",
+        "attributes" : { }
+      } ]
+    }, {
+      "name" : "pageSize",
+      "type" : "java.lang.Long",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_NULL",
+        "attributes" : { }
+      } ]
+    } ],
+    "scenarios" : [ {
+      "id" : "post-api-account-query-happy_path",
+      "name" : "happy_path",
+      "kind" : "happy-path",
+      "requestBody" : {
+        "userId" : 1,
+        "classId" : "classid-sample",
+        "keyword" : "keyword-sample",
+        "roleId" : 1,
+        "roleType" : "roletype-sample",
+        "pageNum" : 1,
+        "pageSize" : 1
+      },
+      "expectedStatus" : 200,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "smoke", "contract" ]
+    }, {
+      "id" : "post-api-account-query-pageNum_missing",
+      "name" : "pageNum_missing",
+      "kind" : "required-field",
+      "requestBody" : {
+        "userId" : 1,
+        "classId" : "classid-sample",
+        "keyword" : "keyword-sample",
+        "roleId" : 1,
+        "roleType" : "roletype-sample",
+        "pageSize" : 1
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "post-api-account-query-pageSize_missing",
+      "name" : "pageSize_missing",
+      "kind" : "required-field",
+      "requestBody" : {
+        "userId" : 1,
+        "classId" : "classid-sample",
+        "keyword" : "keyword-sample",
+        "roleId" : 1,
+        "roleType" : "roletype-sample",
+        "pageNum" : 1
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    } ]
+  }, {
+    "endpointKey" : "POST /api/account/refresh-token",
+    "handler" : "AccountController#accountRefreshToken",
+    "httpMethod" : "POST",
+    "path" : "/api/account/refresh-token",
+    "requestBodyClass" : "com.maghert.examcommon.pojo.dto.RefreshTokenDTO",
+    "validationBound" : true,
+    "fields" : [ {
+      "name" : "refreshToken",
+      "type" : "java.lang.String",
+      "semanticHints" : [ "TOKEN" ],
+      "constraints" : [ {
+        "type" : "NOT_BLANK",
+        "attributes" : { }
+      } ]
+    } ],
+    "scenarios" : [ {
+      "id" : "post-api-account-refresh-token-happy_path",
+      "name" : "happy_path",
+      "kind" : "happy-path",
+      "requestBody" : {
+        "refreshToken" : "mock-token"
+      },
+      "expectedStatus" : 200,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "smoke", "contract" ]
+    }, {
+      "id" : "post-api-account-refresh-token-refreshToken_blank",
+      "name" : "refreshToken_blank",
+      "kind" : "required-field",
+      "requestBody" : {
+        "refreshToken" : ""
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    } ]
+  }, {
+    "endpointKey" : "PUT /api/account/reset-password",
+    "handler" : "AccountController#accountPasswordReset",
+    "httpMethod" : "PUT",
+    "path" : "/api/account/reset-password",
+    "requestBodyClass" : "com.maghert.examcommon.pojo.dto.AccountPasswordResetDTO",
+    "validationBound" : true,
+    "fields" : [ {
+      "name" : "id",
+      "type" : "java.lang.Long",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_NULL",
+        "attributes" : { }
+      } ]
+    }, {
+      "name" : "newPassword",
+      "type" : "java.lang.String",
+      "semanticHints" : [ "PASSWORD" ],
+      "constraints" : [ {
+        "type" : "NOT_NULL",
+        "attributes" : { }
+      } ]
+    }, {
+      "name" : "verifyCode",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    } ],
+    "scenarios" : [ {
+      "id" : "put-api-account-reset-password-happy_path",
+      "name" : "happy_path",
+      "kind" : "happy-path",
+      "requestBody" : {
+        "id" : 1,
+        "newPassword" : "Passw0rd!",
+        "verifyCode" : "verifycode-sample"
+      },
+      "expectedStatus" : 200,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "smoke", "contract" ]
+    }, {
+      "id" : "put-api-account-reset-password-id_missing",
+      "name" : "id_missing",
+      "kind" : "required-field",
+      "requestBody" : {
+        "newPassword" : "Passw0rd!",
+        "verifyCode" : "verifycode-sample"
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "put-api-account-reset-password-newPassword_missing",
+      "name" : "newPassword_missing",
+      "kind" : "required-field",
+      "requestBody" : {
+        "id" : 1,
+        "verifyCode" : "verifycode-sample"
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "put-api-account-reset-password-resource_not_found",
+      "name" : "resource_not_found",
+      "kind" : "whitebox",
+      "requestBody" : {
+        "id" : 1,
+        "newPassword" : "Passw0rd!",
+        "verifyCode" : "verifycode-sample"
+      },
+      "expectedStatus" : 404,
+      "contractExecutable" : false,
+      "integrationExecutable" : false,
+      "tags" : [ "whitebox", "resource" ],
+      "notes" : "Requires a mocked or seeded service state where the target resource does not exist."
+    }, {
+      "id" : "put-api-account-reset-password-backend_failure",
+      "name" : "backend_failure",
+      "kind" : "whitebox",
+      "requestBody" : {
+        "id" : 1,
+        "newPassword" : "Passw0rd!",
+        "verifyCode" : "verifycode-sample"
+      },
+      "expectedStatus" : 500,
+      "contractExecutable" : false,
+      "integrationExecutable" : false,
+      "tags" : [ "whitebox", "persistence" ],
+      "notes" : "Requires a mocked repository/service failure path."
+    } ]
+  }, {
+    "endpointKey" : "POST /api/account/send/verifycode",
+    "handler" : "AccountController#accountSendVerifyCode",
+    "httpMethod" : "POST",
+    "path" : "/api/account/send/verifycode",
+    "requestBodyClass" : "com.maghert.examcommon.pojo.dto.SendVerifyCodeDTO",
+    "validationBound" : true,
+    "fields" : [ {
+      "name" : "phoneNumber",
+      "type" : "java.lang.String",
+      "semanticHints" : [ "PHONE_NUMBER" ],
+      "constraints" : [ {
+        "type" : "NOT_BLANK",
+        "attributes" : { }
+      }, {
+        "type" : "PATTERN",
+        "attributes" : {
+          "regexp" : "^1[3-9]\\d{9}$"
+        }
+      } ]
+    } ],
+    "scenarios" : [ {
+      "id" : "post-api-account-send-verifycode-happy_path",
+      "name" : "happy_path",
+      "kind" : "happy-path",
+      "requestBody" : {
+        "phoneNumber" : "13800138000"
+      },
+      "expectedStatus" : 200,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "smoke", "contract" ]
+    }, {
+      "id" : "post-api-account-send-verifycode-phoneNumber_blank",
+      "name" : "phoneNumber_blank",
+      "kind" : "required-field",
+      "requestBody" : {
+        "phoneNumber" : ""
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "post-api-account-send-verifycode-phoneNumber_invalid_format",
+      "name" : "phoneNumber_invalid_format",
+      "kind" : "format",
+      "requestBody" : {
+        "phoneNumber" : "123456"
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "format", "contract" ]
+    } ]
+  }, {
+    "endpointKey" : "PUT /api/account/update",
+    "handler" : "AccountController#accountUpdate",
+    "httpMethod" : "PUT",
+    "path" : "/api/account/update",
+    "requestBodyClass" : "com.maghert.examcommon.pojo.dto.AccountUpdateDTO",
+    "validationBound" : true,
+    "fields" : [ {
+      "name" : "userId",
+      "type" : "java.lang.Long",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "NOT_NULL",
+        "attributes" : { }
+      } ]
+    }, {
+      "name" : "realName",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "roleId",
+      "type" : "java.lang.Integer",
+      "semanticHints" : [ ],
+      "constraints" : [ {
+        "type" : "MIN",
+        "attributes" : {
+          "value" : 3
+        }
+      }, {
+        "type" : "MAX",
+        "attributes" : {
+          "value" : 6
+        }
+      } ]
+    }, {
+      "name" : "roleType",
+      "type" : "java.lang.String",
+      "semanticHints" : [ ],
+      "constraints" : [ ]
+    }, {
+      "name" : "phoneNumber",
+      "type" : "java.lang.String",
+      "semanticHints" : [ "PHONE_NUMBER" ],
+      "constraints" : [ {
+        "type" : "PATTERN",
+        "attributes" : {
+          "regexp" : "^$|^1[3-9]\\d{9}$"
+        }
+      } ]
+    }, {
+      "name" : "email",
+      "type" : "java.lang.String",
+      "semanticHints" : [ "EMAIL" ],
+      "constraints" : [ {
+        "type" : "EMAIL",
+        "attributes" : { }
+      } ]
+    } ],
+    "scenarios" : [ {
+      "id" : "put-api-account-update-happy_path",
+      "name" : "happy_path",
+      "kind" : "happy-path",
+      "requestBody" : {
+        "userId" : 1,
+        "realName" : "realname-sample",
+        "roleId" : 3,
+        "roleType" : "roletype-sample",
+        "phoneNumber" : "13800138000",
+        "email" : "user@example.com"
+      },
+      "expectedStatus" : 200,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "smoke", "contract" ]
+    }, {
+      "id" : "put-api-account-update-userId_missing",
+      "name" : "userId_missing",
+      "kind" : "required-field",
+      "requestBody" : {
+        "realName" : "realname-sample",
+        "roleId" : 3,
+        "roleType" : "roletype-sample",
+        "phoneNumber" : "13800138000",
+        "email" : "user@example.com"
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "required-field", "contract" ]
+    }, {
+      "id" : "put-api-account-update-roleId_boundary",
+      "name" : "roleId_boundary",
+      "kind" : "boundary",
+      "requestBody" : {
+        "userId" : 1,
+        "realName" : "realname-sample",
+        "roleId" : 2,
+        "roleType" : "roletype-sample",
+        "phoneNumber" : "13800138000",
+        "email" : "user@example.com"
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "boundary", "contract" ]
+    }, {
+      "id" : "put-api-account-update-roleId_boundary",
+      "name" : "roleId_boundary",
+      "kind" : "boundary",
+      "requestBody" : {
+        "userId" : 1,
+        "realName" : "realname-sample",
+        "roleId" : 7,
+        "roleType" : "roletype-sample",
+        "phoneNumber" : "13800138000",
+        "email" : "user@example.com"
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "boundary", "contract" ]
+    }, {
+      "id" : "put-api-account-update-phoneNumber_invalid_format",
+      "name" : "phoneNumber_invalid_format",
+      "kind" : "format",
+      "requestBody" : {
+        "userId" : 1,
+        "realName" : "realname-sample",
+        "roleId" : 3,
+        "roleType" : "roletype-sample",
+        "phoneNumber" : "123456",
+        "email" : "user@example.com"
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "format", "contract" ]
+    }, {
+      "id" : "put-api-account-update-email_invalid_format",
+      "name" : "email_invalid_format",
+      "kind" : "format",
+      "requestBody" : {
+        "userId" : 1,
+        "realName" : "realname-sample",
+        "roleId" : 3,
+        "roleType" : "roletype-sample",
+        "phoneNumber" : "13800138000",
+        "email" : "invalid-email"
+      },
+      "expectedStatus" : 400,
+      "contractExecutable" : true,
+      "integrationExecutable" : true,
+      "tags" : [ "format", "contract" ]
+    }, {
+      "id" : "put-api-account-update-resource_not_found",
+      "name" : "resource_not_found",
+      "kind" : "whitebox",
+      "requestBody" : {
+        "userId" : 1,
+        "realName" : "realname-sample",
+        "roleId" : 3,
+        "roleType" : "roletype-sample",
+        "phoneNumber" : "13800138000",
+        "email" : "user@example.com"
+      },
+      "expectedStatus" : 404,
+      "contractExecutable" : false,
+      "integrationExecutable" : false,
+      "tags" : [ "whitebox", "resource" ],
+      "notes" : "Requires a mocked or seeded service state where the target resource does not exist."
+    }, {
+      "id" : "put-api-account-update-backend_failure",
+      "name" : "backend_failure",
+      "kind" : "whitebox",
+      "requestBody" : {
+        "userId" : 1,
+        "realName" : "realname-sample",
+        "roleId" : 3,
+        "roleType" : "roletype-sample",
+        "phoneNumber" : "13800138000",
+        "email" : "user@example.com"
+      },
+      "expectedStatus" : 500,
+      "contractExecutable" : false,
+      "integrationExecutable" : false,
+      "tags" : [ "whitebox", "persistence" ],
+      "notes" : "Requires a mocked repository/service failure path."
+    } ]
+  } ]
+}

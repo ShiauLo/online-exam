@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.maghert</groupId>
+    <artifactId>apis</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>apis</name>
+    <description>Aggregator project for exam-api modules</description>
+
+    <modules>
+        <module>exam-common</module>
+        <module>exam-gateway</module>
+        <module>exam-account</module>
+        <module>exam-question</module>
+        <module>exam-class</module>
+        <module>exam-system</module>
+        <module>exam-paper</module>
+        <module>exam-core</module>
+        <module>exam-score</module>
+        <module>exam-resource</module>
+        <module>exam-issue-core</module>
+    </modules>
+</project>

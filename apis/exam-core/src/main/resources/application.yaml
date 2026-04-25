@@ -1,0 +1,24 @@
+server:
+  port: 8086
+
+spring:
+  profiles:
+    active: dev, local
+  application:
+    name: exam-core
+  cloud:
+    nacos:
+      discovery:
+        username: ${EXAM_NACOS_USERNAME:nacos}
+        password: ${EXAM_NACOS_PASSWORD:nacos}
+  datasource:
+    username: ${EXAM_DB_USERNAME}
+    password: ${EXAM_DB_PASSWORD}
+
+exam:
+  jwt:
+    secret: "mySuperSecretKeyThatIsAtLeast32BytesLongForHS512"
+    access-token-expiration: 1800000
+    refresh-token-expiration: 604800000
+  api-test:
+    enabled: false

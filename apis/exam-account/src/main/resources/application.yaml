@@ -1,0 +1,47 @@
+server:
+  port: 8081
+
+spring:
+  profiles:
+    active: dev, local
+  application:
+    name: exam-account
+  cloud:
+    nacos:
+      discovery:
+        username: ${EXAM_NACOS_USERNAME}
+        password: ${EXAM_NACOS_PASSWORD}
+  datasource:
+    username: ${EXAM_DB_USERNAME}
+    password: ${EXAM_DB_PASSWORD}
+  data:
+    redis:
+      password: ${EXAM_REDIS_PASSWORD}
+      database: ${EXAM_REDIS_DATABASE}
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 0
+
+aliyun:
+  sms:
+    region: cn-hangzhou
+    endpoint: dypnsapi.aliyuncs.com
+    signName: ssssss
+    templateCode: 100001
+    templateParam: {"code":"verifyCode","min":"TTL"}
+  access-key:
+    id: ${ALIYUN_ACCESS_KEY_ID:}
+    secret: ${ALIYUN_ACCESS_KEY_SECRET:}
+
+exam:
+  jwt:
+    secret: ${EXAM_JWT_SECRET:ChangeThisJwtSecret_2026_AtLeast32Chars}
+    access-token-expiration: 1800000
+    refresh-token-expiration: 604800000
+  api-test:
+    enabled: true
+    generate-on-startup: true
+    controller-base-package: com.maghert.examaccount.controller
