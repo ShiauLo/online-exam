@@ -4,6 +4,7 @@ import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 @Configuration
 public class IdGeneratorConfig {
@@ -15,6 +16,7 @@ public class IdGeneratorConfig {
      * @return Snowflake 实例
      */
     @Bean
+    @Primary
     public Snowflake snowflakeIdGenerator() {
         // workerId 和 dataCenterId 需要保证在你的分布式集群中是唯一的
         // 它们的取值范围都是 0-31

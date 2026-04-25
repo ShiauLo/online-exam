@@ -2,10 +2,12 @@ package com.maghert.examaccount;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import org.apache.ibatis.reflection.MetaObject;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 
 @Component // 必须交给Spring管理
+@Primary
 public class MyMetaObjectHandler implements MetaObjectHandler {
 
     // 插入操作时的填充逻辑
