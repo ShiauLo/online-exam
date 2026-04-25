@@ -146,6 +146,49 @@ docker compose --env-file .env up -d
 - 删除 MySQL 数据卷后重新初始化
 - 手动在 MySQL 容器里执行授权语句，为 `root` 放开宿主机访问
 
+## 本地 MySQL root 授权快速修复
+
+如果你本地一键启动后端时看到类似错误：
+
+- `Access denied for user 'root'@'172.x.x.x'`
+- `exam-account 未在 25s 内监听端口 8081`
+
+这通常不是应用配置错了，而是你本地已有旧的 MySQL 数据卷，容器首次初始化时没有把 `root@'%'` 授权补进去。
+
+优先修复方式有两种：
+
+1. 测试环境直接重建 MySQL 数据卷
+2. 保留现有数据，手动补 `root@'%'` 授权
+
+如果你要保留现有数据，可在 `docs/deploy` 目录执行以下命令。
+把其中的 `<你的 MySQL Root 密码>` 替换成当前 `.env` 里的 `MYSQL_ROOT_PASSWORD`：
+
+```bash
+docker exec -it mysql mysql -uroot -p<你的 MySQL Root 密码> -e "
+CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED WITH mysql_native_password BY '<你的 MySQL Root 密码>';
+ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY '<你的 MySQL Root 密码>';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+"
+```
+
+执行完以后，建议再验证一次：
+
+```bash
+docker exec -it mysql mysql -uroot -p<你的 MySQL Root 密码> -e "SELECT user, host FROM mysql.user WHERE user='root';"
+```
+
+预期至少能看到：
+
+- `root | %`
+- `root | localhost`
+
+然后重新执行：
+
+```powershell
+pwsh -File .\docs\deploy\start-all-local.ps1 -Rebuild
+```
+
 ## 当前项目配置衔接
 
 当前 Spring Boot 服务已统一采用 `application.yaml + application-dev.yaml + application-local.properties` 三层配置方案。

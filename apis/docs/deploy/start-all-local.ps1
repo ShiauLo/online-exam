@@ -340,15 +340,23 @@ function Start-ManagedProcess {
     }
 
     if (-not (Wait-PortListening -Port $Port -TimeoutSeconds $WaitSeconds)) {
+        $accessDenied = $false
         if (Test-Path $outLog) {
             Write-Host ""
             Write-Host "[$Name] 标准输出日志尾部："
             Get-Content $outLog -Tail 80
+            $accessDenied = [bool](Select-String -Path $outLog -Pattern "Access denied for user" -SimpleMatch -ErrorAction SilentlyContinue)
         }
         if (Test-Path $errLog) {
             Write-Host ""
             Write-Host "[$Name] 错误日志尾部："
             Get-Content $errLog -Tail 80
+            if (-not $accessDenied) {
+                $accessDenied = [bool](Select-String -Path $errLog -Pattern "Access denied for user" -SimpleMatch -ErrorAction SilentlyContinue)
+            }
+        }
+        if ($accessDenied) {
+            throw "$Name 未在 ${WaitSeconds}s 内监听端口 $Port。已识别为 MySQL 账号授权失败，请先按 docs/deploy/README.md 中的 本地 MySQL root 授权快速修复 处理。"
         }
         throw "$Name 未在 ${WaitSeconds}s 内监听端口 $Port。"
     }
