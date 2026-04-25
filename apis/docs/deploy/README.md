@@ -325,6 +325,12 @@ pwsh -File .\docs\deploy\start-all-local.ps1 -Rebuild
 pwsh -File .\docs\deploy\start-all-local.ps1
 ```
 
+或直接在 `cmd` / 资源管理器中使用：
+
+```bat
+.\docs\deploy\start-all-local.bat
+```
+
 - 启动全部服务：
 
 ```powershell
@@ -347,6 +353,12 @@ pwsh -File .\docs\deploy\start-all-local.ps1 -UseNacos -Rebuild
 
 ```powershell
 pwsh -File .\docs\deploy\stop-all-local.ps1
+```
+
+对应的 Windows 包装入口：
+
+```bat
+.\docs\deploy\stop-all-local.bat
 ```
 
 脚本行为说明：
@@ -384,6 +396,14 @@ pwsh -File .\docs\deploy\deploy-server.ps1 -Services exam-account,exam-gateway
 pwsh -File .\docs\deploy\deploy-server.ps1 -All
 pwsh -File .\docs\deploy\check-server-access.ps1
 pwsh -File .\docs\deploy\start-web-local.ps1 -ApiBaseUrl "http://你的服务器地址:8080" -WsBaseUrl "http://你的服务器地址:8090" -IssueWsBaseUrl "http://你的服务器地址:8090"
+```
+
+如果你更习惯 `cmd` / `.bat`，现在也可以直接使用：
+
+```bat
+.\docs\deploy\deploy-server.bat -All
+.\docs\deploy\check-server-access.bat
+.\docs\deploy\start-web-local.bat
 ```
 
 服务器侧统一启停示例：
