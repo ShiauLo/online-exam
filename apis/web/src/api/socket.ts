@@ -1,5 +1,5 @@
 import { io, type Socket } from 'socket.io-client';
-import { ISSUE_WS_BASE_URL, WS_BASE_URL, USE_MOCK } from '@/config/runtime';
+import { ISSUE_WS_BASE_URL, ISSUE_WS_PATH, WS_BASE_URL, WS_PATH, USE_MOCK } from '@/config/runtime';
 import { useAuthStore } from '@/stores/auth';
 
 type Listener = (payload: unknown) => void;
@@ -217,6 +217,7 @@ export function createExamSocket() {
   }
   const authStore = useAuthStore();
   return io(WS_BASE_URL, {
+    path: WS_PATH,
     auth: {
       token: authStore.tokens?.accessToken ?? ''
     }
@@ -229,6 +230,7 @@ export function createIssueSocket() {
   }
   const authStore = useAuthStore();
   return io(ISSUE_WS_BASE_URL, {
+    path: ISSUE_WS_PATH,
     auth: {
       token: authStore.tokens?.accessToken ?? ''
     }

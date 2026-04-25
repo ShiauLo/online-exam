@@ -53,6 +53,7 @@ export const appConfigSchema = z.object({
     host: z.string().min(1),
     port: toPositiveInt(8090),
     socketPath: z.string().min(1),
+    issueSocketPath: z.string().min(1),
     corsOrigins: z.string().min(1)
   }),
   mysql: z.object({
@@ -90,5 +91,11 @@ export const appConfigSchema = z.object({
     ttlHoursAfterExam: toPositiveInt(24),
     autoSubmitLockSeconds: toPositiveInt(120),
     countdownIntervalMs: toPositiveInt(1000)
+  }),
+  notify: z.object({
+    defaultLimit: toPositiveInt(20),
+    maxLimit: toPositiveInt(100),
+    pollIntervalMs: toPositiveInt(3000),
+    historyLookbackMinutes: toPositiveInt(1440)
   })
 });

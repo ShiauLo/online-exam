@@ -15,6 +15,12 @@
 
 - Docker 优先承接 MySQL、Redis、RabbitMQ、Nacos 这类中间件
 - Java / Node 微服务继续走宿主机启动，和仓库内现有脚本保持一致
+- `2C2G` 服务器默认收敛为 `5` 个后端进程：
+  `exam-gateway`、`exam-account`、`exam-class`、`exam-core`、`exam-realtime`
+- 其中 Java 宿主按聚合方式运行：
+  `exam-account = account + system`
+  `exam-class = class + question + paper + resource`
+  `exam-core = core + score + issue-core`
 
 ## 目录说明
 
@@ -148,38 +154,36 @@ docker compose --env-file .env up -d
 - 开发远程联调：先建立 SSH 隧道，再使用 `127.0.0.1`
 - 不建议把中间件连接地址直接写成公网 `47.105.121.232`
 
-如果要联调导出文件分发链路，以下服务需要把 `EXAM_RESOURCE_STORAGE_ROOT` 指向同一个本地目录或同一个挂载卷：
+如果要联调导出文件分发链路，当前只需要保证以下聚合宿主使用同一个 `EXAM_RESOURCE_STORAGE_ROOT`：
 
-- `exam-question`
-- `exam-paper`
-- `exam-score`
-- `exam-system`
-- `exam-resource`
+- `exam-class`
+- `exam-account`
+- `exam-core`
 
 ## 微服务端口
 
-当前仓库内各微服务默认端口如下：
+当前仓库内当前阶段默认启动的后端进程如下：
 
 - `exam-gateway`: `8080`
-- `exam-account`: `8081`
-- `exam-class`: `8082`
-- `exam-question`: `8083`
-- `exam-paper`: `8084`
-- `exam-system`: `8085`
-- `exam-core`: `8086`
-- `exam-score`: `8087`（已落地）
-- `exam-issue-core`: `8088`（已落地）
-- `exam-resource`: `8089`（已落地）
-- `exam-realtime`: `8090`（已落地，Node.js + Fastify）
-- `exam-issue-notify`: `8091`（已落地，Node.js + Fastify）
+- `exam-account`: `8081`，承接 `account + system`
+- `exam-class`: `8082`，承接 `class + question + paper + resource`
+- `exam-core`: `8086`，承接 `core + score + issue-core`
+- `exam-realtime`: `8090`，承接 `realtime + issue-notify`（Node.js + Fastify）
 
 说明：
 
-- `exam-system` 已调整为 `8085`，用于避免本地和 `exam-question` 的 `8083` 端口冲突
-- `exam-paper` 使用 `8084`，作为试卷服务固定联调端口
-- `exam-core` 使用 `8086`，用于避免和 `exam-system` 的 `8085` 端口冲突
-- `exam-realtime` 使用 `8090`，通过 Nacos 注册为 `exam-realtime`，网关路由前缀为 `/api/exam/realtime/**`
-- 网关按服务名路由，端口调整不会影响 `lb://exam-system` 这类服务发现路由写法
+- 对外 URL 前缀不变，仍然沿用 `/api/system/**`、`/api/question/**`、`/api/paper/**`、`/api/score/**`、`/api/issue/core/**`
+- 网关仅调整服务发现目标：
+  `/api/system/** -> exam-account`
+  `/api/question|/api/paper|/api/resource/** -> exam-class`
+  `/api/score|/api/issue/core|/api/exam/core/** -> exam-core`
+- `exam-realtime` 使用 `8090`，通过 Nacos 注册为 `exam-realtime`
+- 网关路由统一为：
+  `/api/exam/realtime/** -> exam-realtime`
+  `/api/issue/notify/** -> exam-realtime`
+- WebSocket 统一直连 `exam-realtime`：
+  实时答题使用 `path=/socket.io`
+  问题通知使用 `path=/issue-socket.io`
 
 ## exam-realtime 启动说明
 
@@ -198,21 +202,14 @@ docker compose --env-file .env up -d
 - Nacos：`127.0.0.1:8848`
 - `exam-core`：`http://127.0.0.1:8086`
 
-## exam-issue-notify 启动说明
+## 问题通知能力说明
 
-`exam-issue-notify` 为独立 Node.js 微服务，目录位于 `apis/exam-issue-notify`。
-完整服务边界、配置和联调口径见 `docs/architecture/exam-issue-notify技术栈与首批落地方案.md`。
+问题通知能力已并入 `exam-realtime`，不再单独启动 `exam-issue-notify` 进程。
 
-- 安装依赖：`npm install`
-- 启动开发服务：`npm run dev`
-- 构建检查：`npm run build`
-- 运行测试：`npm run test:run`
+前端问题通知连接口径：
 
-本地默认依赖：
-
-- MySQL：`127.0.0.1:3306`
-- Nacos：`127.0.0.1:8848`
-- 前端问题通知地址：`VITE_ISSUE_WS_BASE_URL=http://127.0.0.1:8091`
+- `VITE_ISSUE_WS_BASE_URL=http://127.0.0.1:8090`
+- `VITE_ISSUE_WS_PATH=/issue-socket.io`
 
 ## web 真实联调说明
 
@@ -229,7 +226,11 @@ docker compose --env-file .env up -d
 - `VITE_WS_BASE_URL`
   - 默认指向 `http://127.0.0.1:8090`
 - `VITE_ISSUE_WS_BASE_URL`
-  - 默认指向 `http://127.0.0.1:8091`
+  - 默认指向 `http://127.0.0.1:8090`
+- `VITE_WS_PATH`
+  - 默认指向 `/socket.io`
+- `VITE_ISSUE_WS_PATH`
+  - 默认指向 `/issue-socket.io`
 - `VITE_USE_MOCK`
   - 当前改为显式开关，只有设置为 `true` 时才走 mock
 
@@ -238,8 +239,8 @@ docker compose --env-file .env up -d
 1. 启动 MySQL、Redis、Nacos
 2. 确认数据库已同步到最新 `docs/sql/mysql.sql`
 3. 启动 `exam-account`、`exam-gateway`
-4. 启动 `exam-core`、`exam-issue-core`
-5. 启动 `exam-realtime`、`exam-issue-notify`
+4. 启动 `exam-class`、`exam-core`
+5. 启动 `exam-realtime`
 6. 在 `web` 目录执行 `npm run dev`
 
 当前真实联调至少需要以下表已经存在，否则虽然服务能启动，但网关转发到真实链路后会直接返回缺表错误：
@@ -287,7 +288,7 @@ pwsh -File .\docs\deploy\stop-all-local.ps1
 
 脚本行为说明：
 
-- 启动顺序为：全部 Java 服务 -> `exam-realtime` -> `exam-issue-notify` -> `web`
+- 启动顺序为：全部 Java 服务 -> `exam-realtime` -> `web`
 - 传入 `-StartTunnel` 时，会先调用 `docs/deploy/start-tunnel.bat`，并等待 `3306/6379/8848` 就绪后再启动应用
 - Java 服务会统一执行一次 Maven 打包，然后以 `--spring.profiles.active=dev,local` 方式启动
 - Node 服务在缺少 `node_modules` 或构建产物时会自动安装依赖并构建
@@ -315,7 +316,7 @@ pwsh -File .\docs\deploy\stop-all-local.ps1
 pwsh -File .\docs\deploy\deploy-server.ps1 -Services exam-account,exam-gateway
 pwsh -File .\docs\deploy\deploy-server.ps1 -All
 pwsh -File .\docs\deploy\check-server-access.ps1
-pwsh -File .\docs\deploy\start-web-local.ps1 -ApiBaseUrl "http://你的服务器地址:8080" -WsBaseUrl "http://你的服务器地址:8090" -IssueWsBaseUrl "http://你的服务器地址:8091"
+pwsh -File .\docs\deploy\start-web-local.ps1 -ApiBaseUrl "http://你的服务器地址:8080" -WsBaseUrl "http://你的服务器地址:8090" -IssueWsBaseUrl "http://你的服务器地址:8090"
 ```
 
 服务器侧统一启停示例：
@@ -349,16 +350,16 @@ pwsh -File .\scripts\live-integration-smoke.ps1
 pwsh -File .\scripts\reset-live-integration-state.ps1
 ```
 
-如果 `exam-common` 变更后需要稳定重启 `exam-issue-core`，建议优先使用：
+如果 `exam-common` 变更后需要稳定重启承接问题主流程的聚合宿主，建议优先重新构建 `exam-core`，再按当前本地或服务器启动方式重启该宿主：
 
 ```powershell
-pwsh -File .\scripts\start-issue-core.ps1 -Rebuild
+.\mvnw.cmd -pl exam-core -am package -DskipTests
 ```
 
-如果你想把“联调状态重置 + 冒烟 + 必要时补拉 issue-core”合并成一步，建议直接使用：
+如果你想把“联调状态重置 + 冒烟 + 必要时补拉 realtime”合并成一步，建议直接使用：
 
 ```powershell
-pwsh -File .\scripts\prepare-live-integration.ps1 -EnsureIssueCore -EnsureRealtime -EnsureIssueNotify
+pwsh -File .\scripts\prepare-live-integration.ps1 -EnsureRealtime
 ```
 
 如果要直接验收两条真实主链，可继续使用：
@@ -371,7 +372,7 @@ pwsh -File .\scripts\verify-live-issue-flow.ps1
 如果想一条命令完成“环境准备 + 两条主链验收 + 最终摘要”，建议直接使用：
 
 ```powershell
-pwsh -File .\scripts\verify-live-integration.ps1 -EnsureIssueCore -EnsureRealtime -EnsureIssueNotify
+pwsh -File .\scripts\verify-live-integration.ps1 -EnsureRealtime
 ```
 
 如果需要按“环境前置 -> 启动顺序 -> 前端配置 -> 主链验收 -> 问题通知验收 -> 排障”完整推进真实联调，请直接使用独立主文档：
@@ -425,13 +426,15 @@ pwsh -File .\scripts\verify-live-integration.ps1 -EnsureIssueCore -EnsureRealtim
 
 - `VITE_API_BASE_URL=http://127.0.0.1:8080`
 - `VITE_WS_BASE_URL=http://127.0.0.1:8090`
-- `VITE_ISSUE_WS_BASE_URL=http://127.0.0.1:8091`
+- `VITE_ISSUE_WS_BASE_URL=http://127.0.0.1:8090`
+- `VITE_WS_PATH=/socket.io`
+- `VITE_ISSUE_WS_PATH=/issue-socket.io`
 - `VITE_USE_MOCK=false`
 
 额外说明：
 
 - 前端真实登录成功后会继续调用 `/api/system/permission/query` 初始化菜单、路由和按钮权限。
-- 因此页面级真实联调时，除了 `exam-account`、`exam-core`、`exam-issue-core`、`exam-realtime`、`exam-issue-notify`，还必须保证 `exam-system` 已启动并可被网关转发。
+- 因此前端页面级真实联调时，必须保证 `exam-account`、`exam-core`、`exam-realtime` 已启动；其中 `exam-account` 已聚合承接 `exam-system` 的权限查询能力。
 
 ## 服务访问建议
 

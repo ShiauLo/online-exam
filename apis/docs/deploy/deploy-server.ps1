@@ -17,43 +17,23 @@ $allServices = @(
     "exam-gateway",
     "exam-account",
     "exam-class",
-    "exam-question",
-    "exam-paper",
-    "exam-system",
     "exam-core",
-    "exam-score",
-    "exam-issue-core",
-    "exam-resource",
-    "exam-realtime",
-    "exam-issue-notify"
+    "exam-realtime"
 )
 
 $allJavaServices = @(
     "exam-gateway",
     "exam-account",
     "exam-class",
-    "exam-question",
-    "exam-paper",
-    "exam-system",
-    "exam-core",
-    "exam-score",
-    "exam-issue-core",
-    "exam-resource"
+    "exam-core"
 )
 
 $serviceDirectoryMap = [ordered]@{
     "exam-gateway" = "exam-gateway/"
     "exam-account" = "exam-account/"
     "exam-class" = "exam-class/"
-    "exam-question" = "exam-question/"
-    "exam-paper" = "exam-paper/"
-    "exam-system" = "exam-system/"
     "exam-core" = "exam-core/"
-    "exam-score" = "exam-score/"
-    "exam-issue-core" = "exam-issue-core/"
-    "exam-resource" = "exam-resource/"
     "exam-realtime" = "exam-realtime/"
-    "exam-issue-notify" = "exam-issue-notify/"
 }
 
 function Write-Section {
@@ -152,6 +132,27 @@ function Resolve-ServicesFromChanges {
 
         if ($file -eq "pom.xml" -or $file.StartsWith("exam-common/") -or $file.StartsWith("config/")) {
             Add-UniqueServices -Target $result -Values $allJavaServices
+            continue
+        }
+
+        # 兼容物理合并前的历史目录，便于识别“删除旧模块”这类变更仍应落到新宿主。
+        if ($file.StartsWith("exam-system/")) {
+            Add-UniqueServices -Target $result -Values @("exam-account")
+            continue
+        }
+
+        if ($file.StartsWith("exam-question/") -or $file.StartsWith("exam-paper/") -or $file.StartsWith("exam-resource/")) {
+            Add-UniqueServices -Target $result -Values @("exam-class")
+            continue
+        }
+
+        if ($file.StartsWith("exam-score/") -or $file.StartsWith("exam-issue-core/")) {
+            Add-UniqueServices -Target $result -Values @("exam-core")
+            continue
+        }
+
+        if ($file.StartsWith("exam-issue-notify/")) {
+            Add-UniqueServices -Target $result -Values @("exam-realtime")
             continue
         }
 

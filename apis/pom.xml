@@ -16,13 +16,7 @@
         <module>exam-common</module>
         <module>exam-gateway</module>
         <module>exam-account</module>
-        <module>exam-question</module>
         <module>exam-class</module>
-        <module>exam-system</module>
-        <module>exam-paper</module>
         <module>exam-core</module>
-        <module>exam-score</module>
-        <module>exam-resource</module>
-        <module>exam-issue-core</module>
     </modules>
 </project>

@@ -25,6 +25,7 @@ describe('loadAppConfig', () => {
         '  host: 0.0.0.0',
         '  port: 8090',
         '  socketPath: /socket.io',
+        '  issueSocketPath: /issue-socket.io',
         '  corsOrigins: "*"',
         'mysql:',
         '  host: yaml-host',
@@ -55,7 +56,12 @@ describe('loadAppConfig', () => {
         'realtime:',
         '  ttlHoursAfterExam: 24',
         '  autoSubmitLockSeconds: 120',
-        '  countdownIntervalMs: 1000'
+        '  countdownIntervalMs: 1000',
+        'notify:',
+        '  defaultLimit: 20',
+        '  maxLimit: 100',
+        '  pollIntervalMs: 3000',
+        '  historyLookbackMinutes: 1440'
       ].join('\n')
     );
     fs.writeFileSync(

@@ -10,9 +10,12 @@ import { DefaultSessionService } from './services/sessionService.js';
 import { DefaultProgressService } from './services/progressService.js';
 import { DefaultSubmitService } from './services/submitService.js';
 import { DefaultAbnormalService } from './services/abnormalService.js';
+import { DefaultIssueNotifyService } from './services/issueNotifyService.js';
 import { ExamCoreClient } from './clients/examCoreClient.js';
 import { NacosRegistry } from './clients/nacosRegistry.js';
 import { ExamRealtimeSocket } from './socket/examRealtimeSocket.js';
+import { IssueNotifySocket } from './socket/issueNotifySocket.js';
+import { MysqlIssueNotifyRepository } from './repositories/mysqlIssueNotifyRepository.js';
 
 const config = loadAppConfig();
 
@@ -39,6 +42,7 @@ await redisClient.connect();
 const examRepository = new MysqlExamReadRepository(mysqlPool);
 const redisRepository = new RedisRealtimeRepository(redisClient);
 const abnormalRepository = new MysqlAbnormalRepository(mysqlPool);
+const issueNotifyRepository = new MysqlIssueNotifyRepository(mysqlPool);
 const examCoreClient = new ExamCoreClient(config.downstream.examCoreBaseUrl);
 const tokenResolver = new TokenResolver(config.jwt.secret);
 const sessionService = new DefaultSessionService(examRepository, redisRepository, config);
@@ -55,6 +59,7 @@ const abnormalService = new DefaultAbnormalService(
   redisRepository,
   config
 );
+const issueNotifyService = new DefaultIssueNotifyService(issueNotifyRepository, config);
 
 const app = createApp({
   config,
@@ -63,7 +68,8 @@ const app = createApp({
     sessionService,
     progressService,
     submitService,
-    abnormalService
+    abnormalService,
+    issueNotifyService
   }
 });
 
@@ -82,12 +88,18 @@ const socketServer = new ExamRealtimeSocket(app.server, {
   submitService,
   redisRepository
 });
+const issueNotifySocketServer = new IssueNotifySocket(app.server, {
+  config,
+  tokenResolver,
+  issueNotifyService
+});
 
 await nacosRegistry.register();
 nacosRegistry.startHeartbeat();
 
 async function shutdown() {
   socketServer.close();
+  issueNotifySocketServer.close();
   nacosRegistry.stopHeartbeat();
   await nacosRegistry.deregister().catch(() => undefined);
   await app.close().catch(() => undefined);

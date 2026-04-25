@@ -1,4 +1,4 @@
-package com.maghert.examcore;
+package com.maghert.examscore;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
@@ -12,10 +12,10 @@ import java.util.Properties;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class CoreConfigurationTests {
+class ScoreConfigurationTests {
 
     @Test
-    void shouldExposeExamCoreApplicationName() {
+    void shouldExposeExamScoreApplicationName() {
         YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
         factory.setResources(new ClassPathResource("exam-core-host.yaml"));
         Properties properties = Objects.requireNonNull(factory.getObject());
@@ -25,7 +25,7 @@ class CoreConfigurationTests {
     }
 
     @Test
-    void shouldRegisterExamCoreModuleInRootPom() throws Exception {
+    void shouldRegisterExamScoreModuleInRootPom() throws Exception {
         String rootPom = Files.readString(Path.of("..", "pom.xml"));
         assertTrue(rootPom.contains("<module>exam-core</module>"));
     }

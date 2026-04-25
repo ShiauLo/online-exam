@@ -195,7 +195,7 @@ pwsh -File .\docs\deploy\deploy-server.ps1 -All
 
 - 修改 `exam-account/**`：部署 `exam-account`
 - 修改 `exam-realtime/**`：部署 `exam-realtime`
-- 修改 `exam-issue-notify/**`：部署 `exam-issue-notify`
+- 修改 `exam-issue-notify/**`：部署 `exam-realtime`
 - 修改 `exam-common/**`：部署全部 Java 微服务
 - 修改根 `pom.xml`：部署全部 Java 微服务
 - 只改 `docs/**`：默认不部署
@@ -215,10 +215,10 @@ pwsh -File .\docs\deploy\deploy-server.ps1 -All
 pwsh -File .\docs\deploy\start-web-local.ps1 `
   -ApiBaseUrl "http://你的服务器地址:8080" `
   -WsBaseUrl "http://你的服务器地址:8090" `
-  -IssueWsBaseUrl "http://你的服务器地址:8091"
+  -IssueWsBaseUrl "http://你的服务器地址:8090"
 ```
 
-如果服务器后端只监听本机地址，请先自行建立 SSH 隧道，把 `8080/8090/8091` 转到本地后再启动前端。
+如果服务器后端只监听本机地址，请先自行建立 SSH 隧道，把 `8080/8090` 转到本地后再启动前端。
 
 ## 9. 常见排查
 

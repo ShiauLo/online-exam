@@ -93,7 +93,8 @@ function applyEnvOverrides(base: LooseObject, env: NodeJS.ProcessEnv) {
     ['downstream.examCoreBaseUrl', 'EXAM_REALTIME_EXAM_CORE_BASE_URL'],
     ['jwt.secret', 'EXAM_JWT_SECRET'],
     ['server.port', 'PORT'],
-    ['server.host', 'HOST']
+    ['server.host', 'HOST'],
+    ['server.issueSocketPath', 'EXAM_ISSUE_SOCKET_PATH']
   ];
 
   for (const [configKey, envKey] of mappings) {

@@ -1,11 +1,7 @@
 [CmdletBinding()]
 param(
-    [switch]$EnsureIssueCore,
     [switch]$EnsureRealtime,
-    [switch]$EnsureIssueNotify,
-    [switch]$RebuildIssueCore,
     [switch]$RebuildRealtime,
-    [switch]$RebuildIssueNotify,
     [int]$StepTimeoutSeconds = 180,
     [string]$ApiBaseUrl = "http://127.0.0.1:8080",
     [string]$RealtimeSocketBaseUrl = "http://127.0.0.1:8090",
@@ -131,23 +127,11 @@ $results += Invoke-Step -Name "环境准备" -Action {
         "-ExamId", "$ExamId",
         "-StudentId", "$StudentId"
     )
-    if ($EnsureIssueCore) {
-        $args += "-EnsureIssueCore"
-    }
     if ($EnsureRealtime) {
         $args += "-EnsureRealtime"
     }
-    if ($EnsureIssueNotify) {
-        $args += "-EnsureIssueNotify"
-    }
-    if ($RebuildIssueCore) {
-        $args += "-RebuildIssueCore"
-    }
     if ($RebuildRealtime) {
         $args += "-RebuildRealtime"
-    }
-    if ($RebuildIssueNotify) {
-        $args += "-RebuildIssueNotify"
     }
     Invoke-ExternalPwshScript -Name "prepare-live-integration" -FilePath $prepareScript -ArgumentList $args
 }

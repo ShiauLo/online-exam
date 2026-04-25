@@ -15,6 +15,7 @@ const config: AppConfig = {
     host: '127.0.0.1',
     port: 8090,
     socketPath: '/socket.io',
+    issueSocketPath: '/issue-socket.io',
     corsOrigins: '*'
   },
   mysql: {
@@ -52,6 +53,12 @@ const config: AppConfig = {
     ttlHoursAfterExam: 24,
     autoSubmitLockSeconds: 120,
     countdownIntervalMs: 50
+  },
+  notify: {
+    defaultLimit: 20,
+    maxLimit: 100,
+    pollIntervalMs: 20,
+    historyLookbackMinutes: 1440
   }
 };
 

@@ -29,21 +29,14 @@ if ([string]::IsNullOrWhiteSpace($MavenRepoLocal)) {
 }
 
 $javaServices = @(
-    @{ Name = "exam-account"; Port = 8081; Module = "exam-account"; Jar = "target/exam-account-0.0.1-SNAPSHOT.jar" },
-    @{ Name = "exam-class"; Port = 8082; Module = "exam-class"; Jar = "target/exam-class-0.0.1-SNAPSHOT.jar" },
-    @{ Name = "exam-question"; Port = 8083; Module = "exam-question"; Jar = "target/exam-question-0.0.1-SNAPSHOT.jar" },
-    @{ Name = "exam-paper"; Port = 8084; Module = "exam-paper"; Jar = "target/exam-paper-0.0.1-SNAPSHOT.jar" },
-    @{ Name = "exam-system"; Port = 8085; Module = "exam-system"; Jar = "target/exam-system-0.0.1-SNAPSHOT.jar" },
-    @{ Name = "exam-core"; Port = 8086; Module = "exam-core"; Jar = "target/exam-core-0.0.1-SNAPSHOT.jar" },
-    @{ Name = "exam-score"; Port = 8087; Module = "exam-score"; Jar = "target/exam-score-0.0.1-SNAPSHOT.jar" },
-    @{ Name = "exam-issue-core"; Port = 8088; Module = "exam-issue-core"; Jar = "target/exam-issue-core-0.0.1-SNAPSHOT.jar" },
-    @{ Name = "exam-resource"; Port = 8089; Module = "exam-resource"; Jar = "target/exam-resource-0.0.1-SNAPSHOT.jar" },
-    @{ Name = "exam-gateway"; Port = 8080; Module = "exam-gateway"; Jar = "target/exam-gateway-0.0.1-SNAPSHOT.jar" }
+    @{ Name = "exam-account"; Port = 8081; Module = "exam-account"; Jar = "target/exam-account-0.0.1-SNAPSHOT.jar"; ConfigName = "exam-account-host" },
+    @{ Name = "exam-class"; Port = 8082; Module = "exam-class"; Jar = "target/exam-class-0.0.1-SNAPSHOT.jar"; ConfigName = "exam-class-host" },
+    @{ Name = "exam-core"; Port = 8086; Module = "exam-core"; Jar = "target/exam-core-0.0.1-SNAPSHOT.jar"; ConfigName = "exam-core-host" },
+    @{ Name = "exam-gateway"; Port = 8080; Module = "exam-gateway"; Jar = "target/exam-gateway-0.0.1-SNAPSHOT.jar"; ConfigName = "" }
 )
 
 $nodeServices = @(
-    @{ Name = "exam-realtime"; Port = 8090; Module = "exam-realtime"; Entry = "dist/src/server.js" },
-    @{ Name = "exam-issue-notify"; Port = 8091; Module = "exam-issue-notify"; Entry = "dist/src/server.js" }
+    @{ Name = "exam-realtime"; Port = 8090; Module = "exam-realtime"; Entry = "dist/src/server.js" }
 )
 
 $frontendService = @{ Name = "web"; Port = 5173; Module = "web" }
@@ -390,7 +383,7 @@ try {
             -Module $service.Module `
             -Port $service.Port `
             -FilePath $javaExe `
-            -Arguments @("-jar", $jarPath, "--spring.profiles.active=dev,local") `
+            -Arguments @("-jar", $jarPath, "--spring.profiles.active=dev,local") + $(if ([string]::IsNullOrWhiteSpace($service.ConfigName)) { @() } else { @("--spring.config.name=$($service.ConfigName)") }) `
             -WaitSeconds $JavaWaitSeconds
     }
 
@@ -433,8 +426,8 @@ try {
     Write-Host "访问入口："
     Write-Host "- 网关: http://127.0.0.1:8080"
     Write-Host "- 前端: http://127.0.0.1:5173"
-    Write-Host "- 实时答题 WS: http://127.0.0.1:8090"
-    Write-Host "- 问题通知 WS: http://127.0.0.1:8091"
+    Write-Host "- 实时答题 WS: http://127.0.0.1:8090  path=/socket.io"
+    Write-Host "- 问题通知 WS: http://127.0.0.1:8090  path=/issue-socket.io"
 } catch {
     $message = $_.Exception.Message
     Stop-StartedProcesses

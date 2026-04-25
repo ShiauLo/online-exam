@@ -12,15 +12,8 @@ ALL_SERVICES=(
   "exam-gateway"
   "exam-account"
   "exam-class"
-  "exam-question"
-  "exam-paper"
-  "exam-system"
   "exam-core"
-  "exam-score"
-  "exam-issue-core"
-  "exam-resource"
   "exam-realtime"
-  "exam-issue-notify"
 )
 
 usage() {
@@ -62,7 +55,7 @@ contains_service() {
 
 service_type() {
   case "$1" in
-    exam-realtime|exam-issue-notify) echo "node" ;;
+    exam-realtime) echo "node" ;;
     *) echo "java" ;;
   esac
 }
@@ -72,15 +65,8 @@ service_port() {
     exam-gateway) echo "8080" ;;
     exam-account) echo "8081" ;;
     exam-class) echo "8082" ;;
-    exam-question) echo "8083" ;;
-    exam-paper) echo "8084" ;;
-    exam-system) echo "8085" ;;
     exam-core) echo "8086" ;;
-    exam-score) echo "8087" ;;
-    exam-issue-core) echo "8088" ;;
-    exam-resource) echo "8089" ;;
     exam-realtime) echo "8090" ;;
-    exam-issue-notify) echo "8091" ;;
     *)
       echo "未知服务端口: $1" >&2
       exit 1
@@ -88,9 +74,18 @@ service_port() {
   esac
 }
 
+service_config_name() {
+  case "$1" in
+    exam-account) echo "exam-account-host" ;;
+    exam-class) echo "exam-class-host" ;;
+    exam-core) echo "exam-core-host" ;;
+    *) echo "" ;;
+  esac
+}
+
 service_entry() {
   case "$1" in
-    exam-realtime|exam-issue-notify) echo "dist/src/server.js" ;;
+    exam-realtime) echo "dist/src/server.js" ;;
     *)
       echo ""
       ;;
@@ -241,6 +236,8 @@ start_service() {
   write_section "启动 $service"
   if [[ "$(service_type "$service")" == "java" ]]; then
     local jar_path="$REPO_DIR/$(service_jar "$service")"
+    local config_name
+    config_name="$(service_config_name "$service")"
     if [[ ! -f "$jar_path" ]]; then
       echo "缺少可启动 jar: $jar_path" >&2
       exit 1
@@ -250,6 +247,7 @@ start_service() {
       cd "$service_dir"
       nohup java $EXAM_JAVA_START_OPTS -jar "$jar_path" \
         --spring.profiles.active=dev,local \
+        ${config_name:+--spring.config.name="$config_name"} \
         --EXAM_NACOS_ADDR="$EXAM_NACOS_ADDR" \
         --EXAM_NACOS_USERNAME="$EXAM_NACOS_USERNAME" \
         --EXAM_NACOS_PASSWORD="$EXAM_NACOS_PASSWORD" \

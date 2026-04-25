@@ -15,7 +15,7 @@ usage() {
   cat <<'EOF'
 用法:
   bash scripts/deploy/start-all-server.sh
-  bash scripts/deploy/start-all-server.sh --services exam-account,exam-system,exam-gateway
+  bash scripts/deploy/start-all-server.sh --services exam-account,exam-core,exam-gateway
 
 参数:
   --repo <path>          工程目录，默认 /opt/online-exam/apis/apis

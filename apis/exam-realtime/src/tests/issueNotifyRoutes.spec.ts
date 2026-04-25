@@ -2,7 +2,6 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { createApp } from '../app.js';
 import { TokenResolver } from '../auth.js';
 import type { AppConfig } from '../types.js';
-import { createAppError, ErrorCatalog } from '../errors.js';
 
 const config: AppConfig = {
   app: {
@@ -60,7 +59,7 @@ const config: AppConfig = {
   }
 };
 
-describe('realtimeRoutes', () => {
+describe('issueNotifyRoutes', () => {
   function buildApp() {
     return createApp({
       config,
@@ -68,72 +67,58 @@ describe('realtimeRoutes', () => {
       services: {
         sessionService: {
           async loadSession() {
-            return {
-              exam: {
-                examId: 8801,
-                examName: 'Java 阶段测验',
-                status: 'UNDERWAY',
-                duration: 90,
-                remainSeconds: 120,
-                startTime: new Date().toISOString(),
-                endTime: new Date(Date.now() + 120000).toISOString()
-              },
-              questions: [],
-              answers: {
-                '1001': 'A'
-              },
-              currentQId: '1001',
-              screenOutCount: 1
-            };
+            throw new Error('unused');
           }
         },
         progressService: {
           async saveProgress() {
-            return {
-              saved: true,
-              savedAt: new Date().toISOString(),
-              currentQId: '1001',
-              screenOutCount: 2
-            };
+            throw new Error('unused');
           },
           async syncScreenOutCount() {
-            return 2;
+            return 0;
           }
         },
         submitService: {
           async submit() {
-            return {
-              examId: 8801,
-              studentId: 4001,
-              status: 'SCORED',
-              submittedAt: new Date().toISOString(),
-              answeredCount: 10
-            };
+            throw new Error('unused');
           }
         },
         abnormalService: {
           async report() {
-            return {
-              abnormalId: '1',
-              reportedAt: new Date().toISOString()
-            };
+            throw new Error('unused');
           }
         },
         issueNotifyService: {
           resolveSubscriptionCursor(cursor?: string) {
-            return cursor ?? new Date().toISOString();
+            return cursor ?? '2026-04-22T00:00:00.000Z';
           },
           async pullNotifications() {
             return {
               scope: 'issue' as const,
-              cursor: new Date().toISOString(),
-              notifications: []
+              cursor: '2026-04-22T12:00:00.000Z',
+              notifications: [
+                {
+                  eventId: 'issue-process-1',
+                  eventType: 'processNotify' as const,
+                  issueId: '9001',
+                  title: '考试页面卡顿',
+                  type: 'EXAM',
+                  status: 'PROCESSING',
+                  handlerId: 3001,
+                  handlerName: '张老师',
+                  reporterId: 4001,
+                  reporterName: '学生A',
+                  processDesc: '教师已接单',
+                  action: 'handled' as const,
+                  time: '2026-04-22T12:00:00.000Z'
+                }
+              ]
             };
           },
           async pollNotifications() {
             return {
               scope: 'issue' as const,
-              cursor: new Date().toISOString(),
+              cursor: '2026-04-22T12:00:00.000Z',
               notifications: []
             };
           }
@@ -142,26 +127,30 @@ describe('realtimeRoutes', () => {
     });
   }
 
-  it('session 接口返回统一成功结构', async () => {
+  afterEach(async () => {
+    // 预留给单测资源回收
+  });
+
+  it('通知查询接口返回统一成功结构', async () => {
     const app = buildApp();
     const response = await app.inject({
       method: 'POST',
-      url: '/api/exam/realtime/session',
+      url: '/api/issue/notify',
       headers: {
         'X-User-Id': '4001',
         'X-Role-Id': '4',
-        'X-Request-Id': 'req-1'
+        'X-Request-Id': 'req-issue-1'
       },
       payload: {
-        examId: 8801
+        limit: 10
       }
     });
 
     expect(response.statusCode).toBe(200);
     const payload = response.json();
     expect(payload.code).toBe(200);
-    expect(payload.data.exam.examId).toBe(8801);
-    expect(payload.data.answers['1001']).toBe('A');
+    expect(payload.data.scope).toBe('issue');
+    expect(payload.data.notifications[0].eventType).toBe('processNotify');
     await app.close();
   });
 
@@ -169,14 +158,14 @@ describe('realtimeRoutes', () => {
     const app = buildApp();
     const response = await app.inject({
       method: 'POST',
-      url: '/api/exam/realtime/session',
+      url: '/api/issue/notify',
       headers: {
         'X-User-Id': '4001',
         'X-Role-Id': '4',
-        'X-Request-Id': 'req-2'
+        'X-Request-Id': 'req-issue-2'
       },
       payload: {
-        examId: 'bad'
+        cursor: 'bad-cursor'
       }
     });
 

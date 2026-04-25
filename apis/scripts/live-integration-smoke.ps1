@@ -2,7 +2,6 @@
 param(
     [string]$ApiBaseUrl = "http://127.0.0.1:8080",
     [string]$RealtimeBaseUrl = "http://127.0.0.1:8090",
-    [string]$IssueNotifyBaseUrl = "http://127.0.0.1:8091",
     [string]$DbHost = "127.0.0.1",
     [int]$DbPort = 3306,
     [string]$DbName = "online_exam_db",
@@ -173,7 +172,7 @@ const mysql = require('./exam-realtime/node_modules/mysql2/promise');
 }
 
 Write-Section "端口检查"
-$ports = 3306, 6379, 8848, 8080, 8081, 8085, 8086, 8088, 8090, 8091, 5173
+$ports = 3306, 6379, 8848, 8080, 8081, 8082, 8086, 8090, 5173
 foreach ($port in $ports) {
     $listening = netstat -ano | Select-String (":$port") | Select-String "LISTENING"
     if ($listening) {
@@ -249,7 +248,7 @@ if ($missing.Count -gt 0) {
     Write-Host "建议先执行 docs/sql/mysql.sql 中缺失表对应的建表语句，再重新运行本脚本。"
 } elseif ($realtimeUnavailable -or $issueUnavailable -or $systemUnavailable) {
     Write-Host "当前主要阻塞为网关路由到下游服务返回 503。"
-    Write-Host "请优先检查 exam-system、exam-realtime、exam-issue-notify 的启动状态、Nacos 注册状态和网关服务发现配置。"
+    Write-Host "请优先检查 exam-account、exam-class、exam-core、exam-realtime 的启动状态、Nacos 注册状态和网关服务发现配置。"
 } elseif (-not $seedReady) {
     Write-Host "当前主要阻塞为最小联调业务数据未初始化。"
     Write-Host "建议执行 scripts/sql/live-integration-seed.sql 后，再重新运行本脚本。"

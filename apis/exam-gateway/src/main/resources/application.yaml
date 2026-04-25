@@ -48,15 +48,15 @@ spring:
               predicates:
                 - Path=/api/class/**
             - id: system
-              uri: lb://exam-system
+              uri: lb://exam-account
               predicates:
                 - Path=/api/system/**
             - id: question
-              uri: lb://exam-question
+              uri: lb://exam-class
               predicates:
                 - Path=/api/question/**
             - id: paper
-              uri: lb://exam-paper
+              uri: lb://exam-class
               predicates:
                 - Path=/api/paper/**
             - id: core
@@ -64,15 +64,15 @@ spring:
               predicates:
                 - Path=/api/exam/core/**
             - id: score
-              uri: lb://exam-score
+              uri: lb://exam-core
               predicates:
                 - Path=/api/score/**
             - id: resource
-              uri: lb://exam-resource
+              uri: lb://exam-class
               predicates:
                 - Path=/api/resource/**
             - id: issue-core
-              uri: lb://exam-issue-core
+              uri: lb://exam-core
               predicates:
                 - Path=/api/issue/core/**
             - id: realtime
@@ -80,7 +80,7 @@ spring:
               predicates:
                 - Path=/api/exam/realtime/**
             - id: issue-notify
-              uri: lb://exam-issue-notify
+              uri: lb://exam-realtime
               predicates:
                 - Path=/api/issue/notify/**
   datasource:

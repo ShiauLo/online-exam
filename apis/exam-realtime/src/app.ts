@@ -5,6 +5,7 @@ import { TokenResolver } from './auth.js';
 import type { AppConfig, RequestContext } from './types.js';
 import { AppError } from './errors.js';
 import { registerRealtimeRoutes } from './routes/realtimeRoutes.js';
+import { registerIssueNotifyRoutes } from './routes/issueNotifyRoutes.js';
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -15,7 +16,9 @@ declare module 'fastify' {
 interface AppDependencies {
   config: AppConfig;
   tokenResolver: TokenResolver;
-  services: Parameters<typeof registerRealtimeRoutes>[1];
+  services: Parameters<typeof registerRealtimeRoutes>[1] & {
+    issueNotifyService?: Parameters<typeof registerIssueNotifyRoutes>[1]['issueNotifyService'];
+  };
 }
 
 export function createApp({ config, tokenResolver, services }: AppDependencies) {
@@ -90,6 +93,11 @@ export function createApp({ config, tokenResolver, services }: AppDependencies) 
 
   app.register(async (instance) => {
     await registerRealtimeRoutes(instance, services);
+    if (services.issueNotifyService) {
+      registerIssueNotifyRoutes(instance, {
+        issueNotifyService: services.issueNotifyService
+      });
+    }
   });
 
   return app;

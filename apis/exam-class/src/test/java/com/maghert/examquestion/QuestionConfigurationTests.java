@@ -1,4 +1,4 @@
-package com.maghert.examcore;
+package com.maghert.examquestion;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
@@ -12,32 +12,31 @@ import java.util.Properties;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class CoreConfigurationTests {
+class QuestionConfigurationTests {
 
     @Test
-    void shouldExposeExamCoreApplicationName() {
+    void shouldExposeExamQuestionApplicationName() {
         YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
-        factory.setResources(new ClassPathResource("exam-core-host.yaml"));
+        factory.setResources(new ClassPathResource("exam-class-host.yaml"));
         Properties properties = Objects.requireNonNull(factory.getObject());
 
-        assertEquals("exam-core", properties.get("spring.application.name"));
-        assertEquals("dev, local", properties.get("spring.profiles.active"));
+        assertEquals("exam-class", properties.get("spring.application.name"));
+        assertEquals("${EXAM_RESOURCE_STORAGE_ROOT:./tmp_resource}", properties.get("exam.resource.local-storage-root"));
     }
 
     @Test
-    void shouldRegisterExamCoreModuleInRootPom() throws Exception {
+    void shouldRegisterExamQuestionModuleInRootPom() throws Exception {
         String rootPom = Files.readString(Path.of("..", "pom.xml"));
-        assertTrue(rootPom.contains("<module>exam-core</module>"));
+        assertTrue(rootPom.contains("<module>exam-class</module>"));
     }
 
     @Test
     void shouldProvideLocalProfileTemplate() throws Exception {
-        String localProperties = Files.readString(Path.of("src", "main", "resources", "exam-core-host-local.properties"));
+        String localProperties = Files.readString(Path.of("src", "main", "resources", "exam-class-host-local.properties"));
 
         assertTrue(localProperties.contains("EXAM_NACOS_ADDR="));
         assertTrue(localProperties.contains("EXAM_DB_HOST="));
         assertTrue(localProperties.contains("EXAM_DB_NAME="));
         assertTrue(localProperties.contains("EXAM_RESOURCE_STORAGE_ROOT="));
-        assertTrue(localProperties.contains("spring.cloud.nacos.discovery.fail-fast=false"));
     }
 }

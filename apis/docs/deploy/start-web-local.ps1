@@ -2,7 +2,7 @@
 param(
     [string]$ApiBaseUrl = "http://127.0.0.1:8080",
     [string]$WsBaseUrl = "http://127.0.0.1:8090",
-    [string]$IssueWsBaseUrl = "http://127.0.0.1:8091",
+    [string]$IssueWsBaseUrl = "http://127.0.0.1:8090",
     [string]$UseMock = "false",
     [int]$Port = 5173,
     [int]$WaitSeconds = 20
